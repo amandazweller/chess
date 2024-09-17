@@ -58,8 +58,13 @@ public class ChessPiece {
         ChessPiece.PieceType piece = ChessMove.getPromotionPiece();
         Collection<ChessPosition> positions = ValidMoves.returnValid(pieceType, myPosition);
         for (ChessPosition position : positions) {
-            ChessMove move = new ChessMove(myPosition, position, piece);
-            moves.add(move);
+            int row = position.getRow();
+            int column = position.getColumn();
+//            if (board[row][column] == ' '){
+//                ChessMove move = new ChessMove(myPosition, position, piece);
+//                moves.add(move);
+//            }
+
         }
         return moves;
     }

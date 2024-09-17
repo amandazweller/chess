@@ -23,16 +23,16 @@ public class ValidMoves {
             ChessPosition newPosition = new ChessPosition(row, column - 1);
             valid.add(newPosition);
         }
-        if (row < 8){
+        if (row < 7){
             ChessPosition newPosition = new ChessPosition(row + 1, column);
             valid.add(newPosition);
             ChessPosition newPosition3 = new ChessPosition(row + 1, column - 1);
-            if (column < 8){
+            if (column < 7){
                 ChessPosition newPosition2 = new ChessPosition(row + 1, column + 1);
                 valid.add(newPosition2);
             }
         }
-        if (column < 8){
+        if (column < 7){
             ChessPosition newPosition = new ChessPosition(row, column + 1);
             valid.add(newPosition);
         }
@@ -59,7 +59,7 @@ public class ValidMoves {
         }
         row = position.getRow();
         column = position.getColumn();
-        while (row < 8 && column < 8){
+        while (row < 7 && column < 7){
             ChessPosition newPosition = new ChessPosition(row + 1, column + 1);
             valid.add(newPosition);
             row += 1;
@@ -67,7 +67,7 @@ public class ValidMoves {
         }
         row = position.getRow();
         column = position.getColumn();
-        while (row < 8 && column >= 1){
+        while (row < 7 && column >= 1){
             ChessPosition newPosition = new ChessPosition(row + 1, column - 1);
             valid.add(newPosition);
             row += 1;
@@ -75,7 +75,7 @@ public class ValidMoves {
         }
         row = position.getRow();
         column = position.getColumn();
-        while (row >= 1 && column < 8){
+        while (row >= 1 && column < 7){
             ChessPosition newPosition = new ChessPosition(row - 1, column + 1);
             valid.add(newPosition);
             row -= 1;
@@ -93,7 +93,7 @@ public class ValidMoves {
                 ChessPosition newPosition = new ChessPosition(row - 2, column - 1);
                 valid.add(newPosition);
             }
-            if (column < 8) {
+            if (column < 7) {
                 ChessPosition newPosition = new ChessPosition(row - 2, column + 1);
                 valid.add(newPosition);
             }
@@ -103,65 +103,60 @@ public class ValidMoves {
                 ChessPosition newPosition = new ChessPosition(row - 1, column - 2);
                 valid.add(newPosition);
             }
-            if (column < 7) {
+            if (column < 6) {
                 ChessPosition newPosition = new ChessPosition(row - 1, column + 2);
                 valid.add(newPosition);
             }
         }
-        if (row < 8){
+        if (row < 7){
             if (column >= 2){
                 ChessPosition newPosition = new ChessPosition(row + 1, column - 2);
                 valid.add(newPosition);
             }
-            if (column < 7) {
+            if (column < 6) {
                 ChessPosition newPosition = new ChessPosition(row + 1, column + 2);
                 valid.add(newPosition);
             }
         }
-        if (row < 7){
+        if (row < 6){
             if(column >= 1){
                 ChessPosition newPosition = new ChessPosition(row + 2, column - 1);
                 valid.add(newPosition);
             }
-            if (column < 8) {
+            if (column < 7) {
                 ChessPosition newPosition = new ChessPosition(row + 2, column + 1);
                 valid.add(newPosition);
             }
         }
         return valid;
     }
-    public static Collection<ChessPosition> PawnMoves(ChessPosition position) {
+    public static Collection<ChessPosition> PawnMoves(ChessPosition position, boolean isWhite) {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
-//        if (color is white){
-//            if (row == 7){
-//                ChessPosition newPosition2 = new ChessPosition(row - 2, column);
-//                valid.add(newPosition2);
-//            }
-//            if (row >= 2){
-//                ChessPosition newPosition = new ChessPosition(row - 1, column);
-//                valid.add(newPosition);
-//            }
-//        }
-
-//        if (color is black){
-//            if (row == 1){
-//                ChessPosition newPosition2 = new ChessPosition(row + 2, column);
-//                valid.add(newPosition2);
-//            }
-//            if (row >= 2){
-//                ChessPosition newPosition = new ChessPosition(row + 1, column);
-//                valid.add(newPosition);
-//            }
-//        }
+        if (isWhite){
+            if (row > 0) {
+                valid.add(new ChessPosition(row - 1, column));
+                if (row == 6) {
+                    valid.add(new ChessPosition(row - 2, column));
+                }
+            }
+        }
+        else {
+            if (row < 7) {
+                valid.add(new ChessPosition(row + 1, column));
+                if (row == 1) {
+                    valid.add(new ChessPosition(row + 2, column));
+                }
+            }
+        }
         return valid;
     }
     public static Collection<ChessPosition> RookMoves(ChessPosition position) {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
-        for (int i = row + 1; i < 8; i++){
+        for (int i = row + 1; i < 7; i++){
             ChessPosition newPosition = new ChessPosition(i, column);
             valid.add(newPosition);
         }
@@ -173,14 +168,14 @@ public class ValidMoves {
             ChessPosition newPosition = new ChessPosition(row, i);
             valid.add(newPosition);
         }
-        for (int i = column + 1; i < 8; i++){
+        for (int i = column + 1; i < 7; i++){
             ChessPosition newPosition = new ChessPosition(row, i);
             valid.add(newPosition);
         }
         return valid;
     }
 
-    public static Collection<ChessPosition> returnValid(ChessPiece.PieceType pieceType, ChessPosition position) {
+    public static Collection<ChessPosition> returnValid(ChessPiece.PieceType pieceType, ChessPosition position, boolean isWhite) {
         Collection<ChessPosition> positions = new ArrayList<>();
         if (pieceType == ChessPiece.PieceType.KING) {
             positions = KingMoves(position);
@@ -195,8 +190,7 @@ public class ValidMoves {
             positions = KnightMoves(position);
         }
         else if (pieceType == ChessPiece.PieceType.PAWN) {
-            //need color
-            positions = PawnMoves(position);
+            positions = PawnMoves(position, isWhite);
         }
         else if (pieceType == ChessPiece.PieceType.ROOK) {
             positions = RookMoves(position);
