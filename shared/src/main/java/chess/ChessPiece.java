@@ -56,14 +56,22 @@ public class ChessPiece {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessPiece.PieceType pieceType = getPieceType();
         ChessPiece.PieceType piece = ChessMove.getPromotionPiece();
-        Collection<ChessPosition> positions = ValidMoves.returnValid(pieceType, myPosition);
+        boolean isWhite = ChessGame.TeamColor.WHITE.equals(pieceColor);
+
+        Collection<ChessPosition> positions = ValidMoves.returnValid(pieceType, myPosition, isWhite);
+
         for (ChessPosition position : positions) {
-            int row = position.getRow();
-            int column = position.getColumn();
-//            if (board[row][column] == ' '){
-//                ChessMove move = new ChessMove(myPosition, position, piece);
-//                moves.add(move);
-//            }
+            ChessPiece targetPiece = board.getPiece(position);
+
+            if (targetPiece == null || targetPiece.getTeamColor() != pieceColor) {
+                ChessMove move = new ChessMove(myPosition, position, piece);
+                moves.add(move);
+            }
+
+            if (pieceType == PieceType.PAWN && (position.getRow() == 0 || position.getColumn() == 7)) {
+                ChessMove promotionMove = new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN); // assuming queen promotion by default
+                moves.add(promotionMove);
+            }
 
         }
         return moves;
