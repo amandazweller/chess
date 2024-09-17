@@ -61,6 +61,7 @@ public class ChessPiece {
         Collection<ChessPosition> positions = ValidMoves.returnValid(pieceType, myPosition, isWhite);
 
         for (ChessPosition position : positions) {
+            System.out.println(position.getRow() + " " + position.getColumn());
             ChessPiece targetPiece = board.getPiece(position);
 
             if (targetPiece == null || targetPiece.getTeamColor() != pieceColor) {
@@ -77,7 +78,7 @@ public class ChessPiece {
                 break;
             }
 
-            if (pieceType == PieceType.PAWN && (position.getRow() == 0 || position.getRow() == 7)) {
+            if (pieceType == PieceType.PAWN && (position.getRow() == 1 || position.getRow() == 8)) {
                 ChessMove promotionMove = new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN); // assuming queen promotion by default
                 moves.add(promotionMove);
             }
