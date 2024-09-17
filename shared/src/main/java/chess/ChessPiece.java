@@ -68,7 +68,16 @@ public class ChessPiece {
                 moves.add(move);
             }
 
-            if (pieceType == PieceType.PAWN && (position.getRow() == 0 || position.getColumn() == 7)) {
+            //CODE CAPTURE OF OTHER PIECE
+            if (targetPiece != null) {
+                if (targetPiece.getTeamColor() != pieceColor) {
+                    ChessMove move = new ChessMove(myPosition, position, piece);
+                    moves.add(move);
+                }
+                break;
+            }
+
+            if (pieceType == PieceType.PAWN && (position.getRow() == 0 || position.getRow() == 7)) {
                 ChessMove promotionMove = new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN); // assuming queen promotion by default
                 moves.add(promotionMove);
             }

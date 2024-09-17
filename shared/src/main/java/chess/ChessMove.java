@@ -42,4 +42,8 @@ public class ChessMove {
     public static ChessPiece.PieceType getPromotionPiece() {
         return promotionPiece;
     }
+
+    public boolean isPromotion() {
+        return promotionPiece != null;
+    }
 }

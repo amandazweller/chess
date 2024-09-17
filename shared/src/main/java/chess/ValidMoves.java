@@ -27,6 +27,7 @@ public class ValidMoves {
             ChessPosition newPosition = new ChessPosition(row + 1, column);
             valid.add(newPosition);
             ChessPosition newPosition3 = new ChessPosition(row + 1, column - 1);
+            valid.add(newPosition3);
             if (column < 7){
                 ChessPosition newPosition2 = new ChessPosition(row + 1, column + 1);
                 valid.add(newPosition2);
