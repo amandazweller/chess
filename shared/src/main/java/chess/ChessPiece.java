@@ -55,28 +55,31 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessPiece.PieceType pieceType = getPieceType();
-        ChessPiece.PieceType piece = ChessMove.getPromotionPiece();
+        ChessPiece.PieceType promotionPiece = ChessMove.getPromotionPiece();
+
         boolean isWhite = ChessGame.TeamColor.WHITE.equals(pieceColor);
 
-        Collection<ChessPosition> positions = ValidMoves.returnValid(pieceType, myPosition, isWhite);
+        Collection<ChessPosition> positions = ValidMoves.returnValid(board, pieceType, myPosition, isWhite);
 
         for (ChessPosition position : positions) {
             System.out.println(position.getRow() + " " + position.getColumn());
-            ChessPiece targetPiece = board.getPiece(position);
+            ChessMove move = new ChessMove(myPosition, position, promotionPiece);
+            moves.add(move);
+            //ChessPiece targetPiece = board.getPiece(position);
 
-            if (targetPiece == null || targetPiece.getTeamColor() != pieceColor) {
-                ChessMove move = new ChessMove(myPosition, position, piece);
-                moves.add(move);
-            }
+//            if (targetPiece == null || targetPiece.getTeamColor() != pieceColor) {
+//                ChessMove move = new ChessMove(myPosition, position, promotionPiece);
+//                moves.add(move);
+//            }
 
             //CODE CAPTURE OF OTHER PIECE
-            if (targetPiece != null) {
-                if (targetPiece.getTeamColor() != pieceColor) {
-                    ChessMove move = new ChessMove(myPosition, position, piece);
-                    moves.add(move);
-                }
-                break;
-            }
+//            if (targetPiece != null) {
+//                if (targetPiece.getTeamColor() != pieceColor) {
+//                    ChessMove move = new ChessMove(myPosition, position, promotionPiece);
+//                    moves.add(move);
+//                }
+//                break;
+//            }
 
             if (pieceType == PieceType.PAWN && (position.getRow() == 1 || position.getRow() == 8)) {
                 ChessMove promotionMove = new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN); // assuming queen promotion by default
