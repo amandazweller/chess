@@ -76,28 +76,17 @@ public class ChessPiece {
 
         for (ChessPosition position : positions) {
             System.out.println(position.getRow() + " " + position.getColumn());
-
-            //ChessPiece targetPiece = board.getPiece(position);
-
-//            if (targetPiece == null || targetPiece.getTeamColor() != pieceColor) {
-//                ChessMove move = new ChessMove(myPosition, position, promotionPiece);
-//                moves.add(move);
-//            }
-
-            //CODE CAPTURE OF OTHER PIECE
-//            if (targetPiece != null) {
-//                if (targetPiece.getTeamColor() != pieceColor) {
-//                    ChessMove move = new ChessMove(myPosition, position, promotionPiece);
-//                    moves.add(move);
-//                }
-//                break;
-//            }
-            if (pieceType == PieceType.PAWN && (position.getRow() == 1 || position.getRow() == 8)) {
-                ChessMove promotionMove = new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN); // assuming queen promotion by default
-                moves.add(promotionMove);
+            if (pieceType == PieceType.PAWN && (position.getRow() == 1 || position.getRow() == 8)) { // assuming queen promotion by default
+                moves.add(new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN));
+                moves.add(new ChessMove(myPosition, position, ChessPiece.PieceType.BISHOP));
+                moves.add(new ChessMove(myPosition, position, ChessPiece.PieceType.ROOK));
+                moves.add(new ChessMove(myPosition, position, ChessPiece.PieceType.KNIGHT));
             }
-            ChessMove move = new ChessMove(myPosition, position, null);
-            moves.add(move);
+            else {
+                ChessMove move = new ChessMove(myPosition, position, null);
+                moves.add(move);
+            }
+
 
         }
         return moves;
