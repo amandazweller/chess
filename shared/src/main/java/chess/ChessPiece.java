@@ -75,7 +75,6 @@ public class ChessPiece {
         Collection<ChessPosition> positions = ValidMoves.returnValid(board, pieceType, myPosition, isWhite);
 
         for (ChessPosition position : positions) {
-            System.out.println(position.getRow() + " " + position.getColumn());
             if (pieceType == PieceType.PAWN && (position.getRow() == 1 || position.getRow() == 8)) { // assuming queen promotion by default
                 moves.add(new ChessMove(myPosition, position, ChessPiece.PieceType.QUEEN));
                 moves.add(new ChessMove(myPosition, position, ChessPiece.PieceType.BISHOP));
