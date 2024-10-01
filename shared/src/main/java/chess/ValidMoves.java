@@ -38,10 +38,13 @@ public class ValidMoves {
             if (board.getPiece(newPosition) == null || board.getPiece(newPosition).getTeamColor() != board.getPiece(position).getTeamColor()){
                 valid.add(newPosition);
             }
-            ChessPosition newPosition3 = new ChessPosition(row + 1, column - 1);
-            if (board.getPiece(newPosition3) == null || board.getPiece(newPosition3).getTeamColor() != board.getPiece(position).getTeamColor()){
-                valid.add(newPosition3);
+            if (column > 1){
+                ChessPosition newPosition3 = new ChessPosition(row + 1, column - 1);
+                if (board.getPiece(newPosition3) == null || board.getPiece(newPosition3).getTeamColor() != board.getPiece(position).getTeamColor()){
+                    valid.add(newPosition3);
+                }
             }
+
             if (column < 8){
                 ChessPosition newPosition2 = new ChessPosition(row + 1, column + 1);
                 if (board.getPiece(newPosition2) == null || board.getPiece(newPosition2).getTeamColor() != board.getPiece(position).getTeamColor()){

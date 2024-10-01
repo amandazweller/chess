@@ -68,37 +68,37 @@ public class ChessGame {
             return null;
         }
         for (ChessMove move : allMoves){
-            //if (!isInCheckmate(Board.getPiece(startPosition).getTeamColor()) && !isInStalemate(Board.getPiece(startPosition).getTeamColor())){
                 if (!willCheck(move)){
                     valid.add(move);
                     System.out.println(move.getEndPosition().getRow() + " " + move.getEndPosition().getColumn());
                 }
-            //}
         }
         return valid;
     }
 
-//    public boolean canCaptureKing(ChessPosition kingPosition, ChessPiece.TeamColor enemyColor) {
-//        for (int i = 0; i < )
-//    }
-
     public Boolean willCheck(ChessMove move){
         ChessBoard newBoard = new ChessBoard();
-        newBoard = Board;
-        ChessPosition newPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
-        if (newBoard.getPiece(newPosition) == null) {
-            return false;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition pos = new ChessPosition(i + 1, j + 1);
+                ChessPiece piece = Board.getPiece(pos);
+                if (piece != null) {
+                    newBoard.addPiece(pos, new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
+                }
+            }
         }
-        boolean willCheck = false;
-        ChessPiece piece = new ChessPiece(newBoard.getPiece(newPosition).getTeamColor(), newBoard.getPiece(newPosition).getPieceType());
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition newPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+        ChessPiece piece = new ChessPiece(newBoard.getPiece(startPosition).getTeamColor(), newBoard.getPiece(startPosition).getPieceType());
         newBoard.addPiece(move.getEndPosition(), piece);
         newBoard.grid[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+        boolean willCheck = false;
         ChessPosition kingPosition = findKingPosition(newBoard, newBoard.getPiece(newPosition).getTeamColor());
 
         for (int i = 1; i < 9; i++){
             for (int j = 1; j < 9; j++){
                 ChessPosition position = new ChessPosition(i, j);
-                if (newBoard.getPiece(position) != null && newBoard.getPiece(position).getTeamColor() != newBoard.getPiece(newPosition).getTeamColor()){
+                if (newBoard.getPiece(position) != null && newBoard.getPiece(position).getTeamColor() != Board.getPiece(startPosition).getTeamColor()){
                     Collection<ChessMove> moves = newBoard.getPiece(position).pieceMoves(newBoard, position);
                     for (ChessMove m : moves){
                         if (m.getEndPosition().equals(kingPosition)){
@@ -120,7 +120,11 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         boolean invalidMove = true;
-        Collection<ChessMove> allMoves = Board.getPiece(move.getStartPosition()).pieceMoves(Board, move.getStartPosition());
+        if (Board.getPiece(move.getStartPosition()) == null){
+            throw new InvalidMoveException("No piece at start");
+        }
+        Collection<ChessMove> allMoves = //Board.getPiece(move.getStartPosition()).pieceMoves(Board, move.getStartPosition());
+                validMoves(move.getStartPosition());
         if (!allMoves.isEmpty()){
             for (ChessMove m : allMoves){
                 if (m.equals(move)){
@@ -129,12 +133,16 @@ public class ChessGame {
                 }
             }
         }
-
         if (invalidMove){
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Not valid move");
         }
         else {
             ChessPiece piece = Board.getPiece(move.getStartPosition());
+            if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
+                if (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8){
+
+                }
+            }
             Board.addPiece(move.getEndPosition(), piece);
             Board.grid[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
         }
