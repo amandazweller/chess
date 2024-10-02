@@ -164,8 +164,11 @@ public class ChessGame {
         if (Board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("No piece at start");
         }
-        Collection<ChessMove> allMoves = //Board.getPiece(move.getStartPosition()).pieceMoves(Board, move.getStartPosition());
-                validMoves(move.getStartPosition());
+        TeamColor color = Board.getPiece(move.getStartPosition()).getTeamColor();
+        if (color != teamTurn){
+            throw new InvalidMoveException("Not right team");
+        }
+        Collection<ChessMove> allMoves = validMoves(move.getStartPosition());
         if (!allMoves.isEmpty()){
             for (ChessMove m : allMoves){
                 if (m.equals(move)){
@@ -188,6 +191,12 @@ public class ChessGame {
             }
 
             Board.grid[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+            if (color.equals(TeamColor.WHITE)){
+                setTeamTurn(TeamColor.BLACK);
+            }
+            else {
+                setTeamTurn(TeamColor.WHITE);
+            }
         }
     }
 

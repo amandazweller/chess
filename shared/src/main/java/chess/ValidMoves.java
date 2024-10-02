@@ -9,15 +9,6 @@ public class ValidMoves {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
-//        ChessPosition whiteKing = new ChessPosition(1,5);
-//        ChessPosition blackKing = new ChessPosition(8, 5);
-//        if (row == 1 && column == 5 && board.getPiece(whiteKing).getTeamColor().equals(ChessGame.TeamColor.WHITE){
-//             if (board.getPiece(new ChessPosition(1,1)).getPieceType().equals(ChessPiece.PieceType.ROOK)){
-//                 if (board.getPiece(new ChessPosition(1,2)) == null && board.getPiece(new ChessPosition(1,3)) == null && board.getPiece(new ChessPosition(1,4)) == null){
-//
-//                 }
-//             }
-//        }
         if (row >= 2){
             ChessPosition newPosition = new ChessPosition(row - 1, column);
             if (board.getPiece(newPosition) == null || board.getPiece(newPosition).getTeamColor() != board.getPiece(position).getTeamColor()){
