@@ -15,6 +15,8 @@ public class ChessGame {
     private ChessBoard Board = new ChessBoard();
 
     public ChessGame() {
+        initalizeBoard();
+        setTeamTurn(TeamColor.WHITE);
     }
 
     /**
@@ -31,6 +33,36 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
+    }
+
+    public void initalizeBoard(){
+        Board.grid = new ChessPiece[8][8];
+
+        Board.grid[0][0] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        Board.grid[0][1] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        Board.grid[0][2] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        Board.grid[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        Board.grid[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        Board.grid[0][5] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        Board.grid[0][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        Board.grid[0][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+
+        for (int i = 0; i < 8; i++) {
+            Board.grid[1][i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        }
+
+        Board.grid[7][0] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        Board.grid[7][1] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        Board.grid[7][2] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        Board.grid[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        Board.grid[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        Board.grid[7][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        Board.grid[7][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        Board.grid[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+
+        for (int i = 0; i < 8; i++) {
+            Board.grid[6][i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        }
     }
 
     /**
@@ -68,6 +100,15 @@ public class ChessGame {
             return null;
         }
         for (ChessMove move : allMoves){
+            if (Board.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING){
+                if (startPosition.getRow() == 1 && startPosition.getColumn() == 5 && Board.getPiece(startPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE){
+                    if (Board.getPiece(new ChessPosition(1,1)).getPieceType().equals(ChessPiece.PieceType.ROOK)){
+                        if (Board.getPiece(new ChessPosition(1,2)) == null && Board.getPiece(new ChessPosition(1,3)) == null && Board.getPiece(new ChessPosition(1,4)) == null){
+
+                        }
+                    }
+                }
+            }
                 if (!willCheck(move)){
                     valid.add(move);
                     System.out.println(move.getEndPosition().getRow() + " " + move.getEndPosition().getColumn());
@@ -138,12 +179,14 @@ public class ChessGame {
         }
         else {
             ChessPiece piece = Board.getPiece(move.getStartPosition());
-            if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                if (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8){
-
-                }
+            if (move.getPromotionPiece() == null){
+                Board.addPiece(move.getEndPosition(), piece);
             }
-            Board.addPiece(move.getEndPosition(), piece);
+            else {
+                ChessPiece promotion = new ChessPiece( piece.getTeamColor(), move.getPromotionPiece());
+                Board.addPiece(move.getEndPosition(), promotion);
+            }
+
             Board.grid[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
         }
     }
@@ -214,6 +257,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        boolean allNull = true;
         if (isInCheck(teamColor)) {
             return false;
         }
@@ -222,6 +266,7 @@ public class ChessGame {
             for (int j = 1; j < 9; j++){
                 ChessPosition newPosition = new ChessPosition(i, j);
                 if (Board.getPiece(newPosition)!= null && Board.getPiece(newPosition).getTeamColor().equals(teamColor)){
+                    allNull = false;
                     if (!validMoves(newPosition).isEmpty()){
                         isInStalemate = false;
                         //doesn't work bc still need to see if another piece can protect the king not just if they still have moves
@@ -229,6 +274,9 @@ public class ChessGame {
                     }
                 }
             }
+        }
+        if (allNull){
+            isInStalemate = false;
         }
         return isInStalemate;
     }
