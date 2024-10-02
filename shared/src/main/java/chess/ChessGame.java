@@ -100,15 +100,15 @@ public class ChessGame {
             return null;
         }
         for (ChessMove move : allMoves){
-            if (Board.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING){
-                if (startPosition.getRow() == 1 && startPosition.getColumn() == 5 && Board.getPiece(startPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE){
-                    if (Board.getPiece(new ChessPosition(1,1)).getPieceType().equals(ChessPiece.PieceType.ROOK)){
-                        if (Board.getPiece(new ChessPosition(1,2)) == null && Board.getPiece(new ChessPosition(1,3)) == null && Board.getPiece(new ChessPosition(1,4)) == null){
-
-                        }
-                    }
-                }
-            }
+//            if (Board.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING){
+//                if (startPosition.getRow() == 1 && startPosition.getColumn() == 5 && Board.getPiece(startPosition).getTeamColor().equals(ChessGame.TeamColor.WHITE){
+//                    if (Board.getPiece(new ChessPosition(1,1)).getPieceType().equals(ChessPiece.PieceType.ROOK)){
+//                        if (Board.getPiece(new ChessPosition(1,2)) == null && Board.getPiece(new ChessPosition(1,3)) == null && Board.getPiece(new ChessPosition(1,4)) == null){
+//
+//                        }
+//                    }
+//                }
+//            }
                 if (!willCheck(move)){
                     valid.add(move);
                     System.out.println(move.getEndPosition().getRow() + " " + move.getEndPosition().getColumn());
