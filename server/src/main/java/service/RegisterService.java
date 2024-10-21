@@ -23,6 +23,6 @@ public class RegisterService {
         if (oldData != null){
             throw new ResponseException(403, "Error: already taken");
         }
-        return memoryAuthDAO.addAuth(userData.username());;
+        return memoryAuthDAO.addAuth(userData.username());
     }
 }
