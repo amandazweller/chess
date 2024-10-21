@@ -12,17 +12,20 @@ public class RegisterService {
     private MemoryAuthDAO memoryAuthDAO;
 
     public RegisterService(MemoryUserDAO memoryUserDAO, MemoryAuthDAO memoryAuthDAO){
-
+        this.memoryAuthDAO = memoryAuthDAO;
+        this.memoryUserDAO = memoryUserDAO;
     }
 
     public AuthData addUser(UserData userData) throws ResponseException, DataAccessException {
         if (userData.username() == null || userData.email() == null || userData.password() == null){
             throw new ResponseException(400, "Error: bad request");
         }
-        UserData oldData = memoryUserDAO.getUser(userData.username());
-        if (oldData != null){
+        if (memoryUserDAO.getUser(userData.username()) == null){
+            memoryUserDAO.createUser(userData);
+            return memoryAuthDAO.addAuth(userData.username());
+        }
+        else {
             throw new ResponseException(403, "Error: already taken");
         }
-        return memoryAuthDAO.addAuth(userData.username());
     }
 }
