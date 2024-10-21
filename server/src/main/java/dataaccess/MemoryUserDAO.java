@@ -15,4 +15,8 @@ public class MemoryUserDAO implements UserDAO {
     public void createUser(UserData userData) throws DataAccessException {
         userDataMap.put(userData.username(), userData);
     }
+
+    public UserData getUser(String username) throws DataAccessException {
+        return userDataMap.get(username);
+    }
 }
