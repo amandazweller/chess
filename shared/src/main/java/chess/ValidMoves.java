@@ -62,8 +62,8 @@ public class ValidMoves {
     }
 
     public static Collection<ChessPosition> queenMoves(ChessBoard board, ChessPosition position) {
-        Collection<ChessPosition> valid;
-        Collection<ChessPosition> queenMoves;
+        Collection<ChessPosition> valid = new ArrayList<>();
+        Collection<ChessPosition> queenMoves = new ArrayList<>();
         valid = bishopMoves(board, position);
         queenMoves = rookMoves(board, position);
         valid.addAll(queenMoves);
