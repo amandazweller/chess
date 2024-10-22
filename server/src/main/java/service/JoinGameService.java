@@ -21,6 +21,9 @@ public class JoinGameService {
     }
 
     public Object joinGame(Integer gameID, String authToken, String playerColor) throws ResponseException, DataAccessException {
+        if (gameID == null || authToken == null || playerColor == null){
+            throw new ResponseException(400, "Error: bad request");
+        }
         if (memoryGameDAO.getGame(gameID) == null){
             throw new ResponseException(400, "Error: bad request");
         }

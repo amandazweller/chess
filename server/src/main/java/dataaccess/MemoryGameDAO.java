@@ -24,6 +24,9 @@ public class MemoryGameDAO implements GameDAO{
             GameData gameData = gameDataMap.get(key);
             allGames.add(gameData);
         }
+        if (allGames.isEmpty()){
+            return null;
+        }
         return allGames;
     }
 

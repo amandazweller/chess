@@ -7,6 +7,8 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.ResponseException;
 import java.util.Map;
+import java.util.Vector;
+
 import com.google.gson.JsonObject;
 
 
@@ -92,23 +94,26 @@ public class Server {
 
     private Object listGames(Request request, Response response) throws ResponseException, DataAccessException{
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
-        Object listGameResponse = listGamesService.listAllGames(authToken);
+        Vector<GameData> listGameResponse = listGamesService.listAllGames(authToken);
         return new Gson().toJson(listGameResponse);
     }
 
     private Object createGame(Request request, Response response) throws ResponseException, DataAccessException{
         var game = new Gson().fromJson(request.body(), GameData.class);
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
-        Object createGameResponse = createGameService.createGame(game.gameName(), authToken);
+        GameData createGameResponse = createGameService.createGame(game.gameName(), authToken);
         return new Gson().toJson(createGameResponse);
     }
 
     private Object joinGame(Request request, Response response) throws ResponseException, DataAccessException{
+        var game = new Gson().fromJson(request.body(), GameData.class);
         JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
+        if (!body.has("playerColor") || body.get("playerColor").isJsonNull()) {
+            throw new ResponseException(400, "Error: bad request");
+        }
         String playerColor = body.get("playerColor").getAsString();
-        int gameID = body.get("gameID").getAsInt();
-        String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
-        Object joinGameResponse = joinGameService.joinGame(gameID, authToken, playerColor);
+        String authToken = request.headers("Authorization");
+        Object joinGameResponse = joinGameService.joinGame(game.gameID(), authToken, playerColor);
         return new Gson().toJson(joinGameResponse);
     }
 
