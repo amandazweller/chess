@@ -11,20 +11,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 public class ServiceTests {
-    private MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-    private MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-    private MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+    private final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
 
-    private RegisterService registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
-    private LoginService loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
-    private LogoutService logoutService = new LogoutService(memoryAuthDAO);
-    private ListGamesService listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
-    private CreateGameService createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
-    private JoinGameService joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
-    private ClearService clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+    private final RegisterService registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
+    private final LoginService loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
+    private final LogoutService logoutService = new LogoutService(memoryAuthDAO);
+    private final ListGamesService listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
+    private final CreateGameService createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
+    private final JoinGameService joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
+    private final ClearService clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
     String username = "username";
     String password = "password";
     String email = "email";
@@ -49,9 +47,7 @@ public class ServiceTests {
         String password = null;
         String email = "email";
         UserData userData = new UserData(username, password, email);
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> {
-            registerService.addUser(userData);
-        });
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> registerService.addUser(userData));
         Assertions.assertEquals("Error: bad request", exception.getMessage());
     }
 
@@ -70,9 +66,7 @@ public class ServiceTests {
     public void LoginFailWrongPassword () {
         Register();
         UserData failData = new UserData(username, "incorrectPassword", email);
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> {
-            loginService.getUser(failData);
-        });
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> loginService.getUser(failData));
         Assertions.assertEquals("Error: unauthorized", exception.getMessage());
 
     }
@@ -83,16 +77,14 @@ public class ServiceTests {
         Register();
         AuthData authData = loginService.getUser(userData);
         logoutService.logoutUser(authData.authToken());
-        Assertions.assertEquals(memoryAuthDAO.getAuth(authData.authToken()), null);
+        Assertions.assertNull(memoryAuthDAO.getAuth(authData.authToken()));
     }
 
     @Test
     @DisplayName("Logout Fail")
     public void LogoutWrongAuth() {
         String authToken = "hello";
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> {
-            logoutService.logoutUser(authToken);
-        });
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> logoutService.logoutUser(authToken));
         Assertions.assertEquals("Error: unauthorized", exception.getMessage());
     }
 
@@ -111,9 +103,7 @@ public class ServiceTests {
     public void CreateGameNoGameName() {
         Login();
         AuthData authData = loginService.getUser(userData);
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> {
-            GameData currGameData = createGameService.createGame(null, authData.authToken());
-        });
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> createGameService.createGame(null, authData.authToken()));
         Assertions.assertEquals("Error: bad request", exception.getMessage());
     }
 
@@ -137,9 +127,7 @@ public class ServiceTests {
         String playerColor = null;
         AuthData authData = loginService.getUser(userData);
         GameData game = createGameService.createGame(gameName3, authData.authToken());
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> {
-            joinGameService.joinGame(game.gameID(), authData.authToken(), playerColor);
-        });
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> joinGameService.joinGame(game.gameID(), authData.authToken(), playerColor));
         Assertions.assertEquals("Error: bad request", exception.getMessage());
     }
 
@@ -157,8 +145,7 @@ public class ServiceTests {
     public void ListAllGamesWrongAuth() {
         Login();
         String authToken = "nothing";
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> {
-            ListGameResponse listGameResponse = listGamesService.listAllGames(authToken);        });
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> listGamesService.listAllGames(authToken));
         Assertions.assertEquals("Error: unauthorized", exception.getMessage());
     }
 
@@ -166,6 +153,6 @@ public class ServiceTests {
     @DisplayName("Clear Success")
     public void Clear() {
         clearService.clear();
-        Assertions.assertEquals(memoryGameDAO.listAllGames().isEmpty(), true);
+        Assertions.assertTrue(memoryGameDAO.listAllGames().isEmpty());
     }
 }
