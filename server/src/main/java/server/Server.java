@@ -8,6 +8,8 @@ import dataaccess.MemoryUserDAO;
 import exceptions.ResponseException;
 import java.util.Map;
 import model.UserData;
+import service.LoginService;
+import service.LogoutService;
 import service.RegisterService;
 import spark.*;
 
@@ -17,8 +19,13 @@ public class Server {
     private MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
 
     private RegisterService registerService;
+    private LoginService loginService;
+    private LogoutService logoutService;
+
     public Server(){
         this.registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
+        this.loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
+        this.logoutService = new LogoutService(memoryUserDAO, memoryAuthDAO);
     }
 
     public int run(int desiredPort) {
@@ -28,8 +35,8 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", this::registerUser);
-//        Spark.post("/session", userHandler.loginUser);
-//        Spark.delete("/session", userHandler.logoutUser);
+        Spark.post("/session", this::loginUser);
+        Spark.delete("/session", this::logoutUser);
 //        Spark.post("/game", userHandler.createGame);
 //        Spark.get("/game", userHandler.listGames);
 //        Spark.put("/game", userHandler.joinGame);
@@ -58,6 +65,18 @@ public class Server {
         var user = new Gson().fromJson(request.body(), UserData.class);
         Object registerResponse = registerService.addUser(user);
         return new Gson().toJson(registerResponse);
+    }
+
+    private Object loginUser(Request request, Response response) throws ResponseException, DataAccessException{
+        var user = new Gson().fromJson(request.body(), UserData.class);
+        Object loginResponse = loginService.getUser(user);
+        return new Gson().toJson(loginResponse);
+    }
+
+    private Object logoutUser(Request request, Response response) throws ResponseException, DataAccessException{
+        String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
+        Object logoutResponse = logoutService.logoutUser(authToken);
+        return new Gson().toJson(logoutResponse);
     }
 
     public void stop() {

@@ -19,7 +19,11 @@ public class MemoryAuthDAO implements AuthDAO{
         return authData;
     }
 
-    public AuthData getAuth(String username) throws DataAccessException {
-        return null;
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        return authDataMap.get(authToken);
+    }
+
+    public void deleteAuth(String authToken) throws DataAccessException{
+        authDataMap.remove(authToken);
     }
 }
