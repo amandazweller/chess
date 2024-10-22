@@ -7,10 +7,10 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.ResponseException;
 import java.util.Map;
+
+import model.GameData;
 import model.UserData;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterService;
+import service.*;
 import spark.*;
 
 public class Server {
@@ -21,11 +21,15 @@ public class Server {
     private RegisterService registerService;
     private LoginService loginService;
     private LogoutService logoutService;
+    private ListGamesService listGamesService;
+    private CreateGameService createGameService;
 
     public Server(){
         this.registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
         this.loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
         this.logoutService = new LogoutService(memoryUserDAO, memoryAuthDAO);
+        this.listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
+        this.createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
     }
 
     public int run(int desiredPort) {
@@ -37,8 +41,8 @@ public class Server {
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
-//        Spark.post("/game", userHandler.createGame);
-//        Spark.get("/game", userHandler.listGames);
+        //Spark.post("/game", this::createGame);
+        Spark.get("/game", this::listGames);
 //        Spark.put("/game", userHandler.joinGame);
 //        Spark.delete("/db", userHandler.clearAll);
           Spark.exception(ResponseException.class, this::exceptionResponse);
@@ -77,6 +81,19 @@ public class Server {
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
         Object logoutResponse = logoutService.logoutUser(authToken);
         return new Gson().toJson(logoutResponse);
+    }
+
+    private Object listGames(Request request, Response response) throws ResponseException, DataAccessException{
+        String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
+        Object listGameResponse = listGamesService.listAllGames(authToken);
+        return new Gson().toJson(listGameResponse);
+    }
+
+    private Object createGame(Request request, Response response) throws ResponseException, DataAccessException{
+        var game = new Gson().fromJson(request.body(), GameData.class);
+        String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
+        Object createGameResponse = createGameService.createGame(game, authToken);
+        return new Gson().toJson(createGameResponse);
     }
 
     public void stop() {
