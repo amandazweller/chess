@@ -5,7 +5,7 @@ import java.util.Collection;
 public class ValidMoves {
 
     public ValidMoves() {}
-    public static Collection<ChessPosition> KingMoves(ChessBoard board, ChessPosition position){
+    public static Collection<ChessPosition> kingMoves(ChessBoard board, ChessPosition position){
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
@@ -61,15 +61,15 @@ public class ValidMoves {
         return valid;
     }
 
-    public static Collection<ChessPosition> QueenMoves(ChessBoard board, ChessPosition position) {
-        Collection<ChessPosition> valid = new ArrayList<>();
-        Collection<ChessPosition> queenMoves = new ArrayList<>();
-        valid = BishopMoves(board, position);
-        queenMoves = RookMoves(board, position);
+    public static Collection<ChessPosition> queenMoves(ChessBoard board, ChessPosition position) {
+        Collection<ChessPosition> valid;
+        Collection<ChessPosition> queenMoves;
+        valid = bishopMoves(board, position);
+        queenMoves = rookMoves(board, position);
         valid.addAll(queenMoves);
         return valid;
     }
-    public static Collection<ChessPosition> BishopMoves(ChessBoard board, ChessPosition position) {
+    public static Collection<ChessPosition> bishopMoves(ChessBoard board, ChessPosition position) {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
@@ -142,7 +142,7 @@ public class ValidMoves {
 
         return valid;
     }
-    public static Collection<ChessPosition> KnightMoves(ChessBoard board, ChessPosition position) {
+    public static Collection<ChessPosition> knightMoves(ChessBoard board, ChessPosition position) {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
@@ -205,7 +205,7 @@ public class ValidMoves {
         }
         return valid;
     }
-    public static Collection<ChessPosition> PawnMoves(ChessBoard board, ChessPosition position, boolean isWhite) {
+    public static Collection<ChessPosition> pawnMoves(ChessBoard board, ChessPosition position, boolean isWhite) {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
@@ -267,7 +267,7 @@ public class ValidMoves {
         }
         return valid;
     }
-    public static Collection<ChessPosition> RookMoves(ChessBoard board, ChessPosition position) {
+    public static Collection<ChessPosition> rookMoves(ChessBoard board, ChessPosition position) {
         Collection<ChessPosition> valid = new ArrayList<>();
         int row = position.getRow();
         int column = position.getColumn();
@@ -329,22 +329,22 @@ public class ValidMoves {
     public static Collection<ChessPosition> returnValid(ChessBoard board, ChessPiece.PieceType pieceType, ChessPosition position, boolean isWhite) {
         Collection<ChessPosition> positions = new ArrayList<>();
         if (pieceType == ChessPiece.PieceType.KING) {
-            positions = KingMoves(board, position);
+            positions = kingMoves(board, position);
         }
         else if (pieceType == ChessPiece.PieceType.QUEEN) {
-            positions = QueenMoves(board, position);
+            positions = queenMoves(board, position);
         }
         else if (pieceType == ChessPiece.PieceType.BISHOP) {
-            positions = BishopMoves(board, position);
+            positions = bishopMoves(board, position);
         }
         else if (pieceType == ChessPiece.PieceType.KNIGHT) {
-            positions = KnightMoves(board, position);
+            positions = knightMoves(board, position);
         }
         else if (pieceType == ChessPiece.PieceType.PAWN) {
-            positions = PawnMoves(board, position, isWhite);
+            positions = pawnMoves(board, position, isWhite);
         }
         else if (pieceType == ChessPiece.PieceType.ROOK) {
-            positions = RookMoves(board, position);
+            positions = rookMoves(board, position);
         }
         return positions;
     }

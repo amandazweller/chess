@@ -33,7 +33,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Register Success")
-    public void Register (){
+    public void register (){
         registerService.addUser(userData);
         Assertions.assertEquals(memoryUserDAO.getUser(username).username(), username);
         Assertions.assertEquals(memoryUserDAO.getUser(username).password(), password);
@@ -42,7 +42,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Register Fail")
-    public void RegisterNoPassword (){
+    public void registerNoPassword (){
         String username = "username";
         String password = null;
         String email = "email";
@@ -53,8 +53,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Login Success")
-    public void Login () {
-        Register();
+    public void login () {
+        register();
         loginService.getUser(userData);
         Assertions.assertEquals(memoryUserDAO.getUser(username).username(), username);
         Assertions.assertEquals(memoryUserDAO.getUser(username).password(), password);
@@ -63,8 +63,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Login Fail")
-    public void LoginFailWrongPassword () {
-        Register();
+    public void loginFailWrongPassword () {
+        register();
         UserData failData = new UserData(username, "incorrectPassword", email);
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> loginService.getUser(failData));
         Assertions.assertEquals("Error: unauthorized", exception.getMessage());
@@ -73,8 +73,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Logout Success")
-    public void Logout() {
-        Register();
+    public void logout() {
+        register();
         AuthData authData = loginService.getUser(userData);
         logoutService.logoutUser(authData.authToken());
         Assertions.assertNull(memoryAuthDAO.getAuth(authData.authToken()));
@@ -82,7 +82,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Logout Fail")
-    public void LogoutWrongAuth() {
+    public void logoutWrongAuth() {
         String authToken = "hello";
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> logoutService.logoutUser(authToken));
         Assertions.assertEquals("Error: unauthorized", exception.getMessage());
@@ -90,8 +90,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Create Game Success")
-    public void CreateGame() {
-        Login();
+    public void createGame() {
+        login();
         AuthData authData = loginService.getUser(userData);
         GameData currGameData = createGameService.createGame(gameName, authData.authToken());
         Assertions.assertEquals(memoryGameDAO.getGame(currGameData.gameID()), currGameData);
@@ -100,8 +100,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Create Game Fail")
-    public void CreateGameNoGameName() {
-        Login();
+    public void createGameNoGameName() {
+        login();
         AuthData authData = loginService.getUser(userData);
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> createGameService.createGame(null, authData.authToken()));
         Assertions.assertEquals("Error: bad request", exception.getMessage());
@@ -109,8 +109,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Join Game Success")
-    public void JoinGame() {
-        Login();
+    public void joinGame() {
+        login();
         String gameName2 = "gameName2";
         String playerColor = "WHITE";
         AuthData authData = loginService.getUser(userData);
@@ -121,8 +121,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Join Game Fail")
-    public void JoinGameNoPlayerColor() {
-        Login();
+    public void joinGameNoPlayerColor() {
+        login();
         String gameName3 = "gameName3";
         String playerColor = null;
         AuthData authData = loginService.getUser(userData);
@@ -133,8 +133,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("List Games Success")
-    public void ListGames() {
-        Login();
+    public void listGames() {
+        login();
         AuthData authData = loginService.getUser(userData);
         ListGameResponse listGameResponse = listGamesService.listAllGames(authData.authToken());
         Assertions.assertEquals(listGameResponse.games(), memoryGameDAO.listAllGames());
@@ -142,8 +142,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("List Games Fail")
-    public void ListAllGamesWrongAuth() {
-        Login();
+    public void listAllGamesWrongAuth() {
+        login();
         String authToken = "nothing";
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> listGamesService.listAllGames(authToken));
         Assertions.assertEquals("Error: unauthorized", exception.getMessage());
@@ -151,7 +151,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Clear Success")
-    public void Clear() {
+    public void clear() {
         clearService.clear();
         Assertions.assertTrue(memoryGameDAO.listAllGames().isEmpty());
     }
