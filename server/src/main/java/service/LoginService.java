@@ -20,10 +20,10 @@ public class LoginService {
 
     public AuthData getUser(UserData userData) throws ResponseException, DataAccessException{
         if (memoryUserDAO.getUser(userData.username()) == null){
-            throw new ResponseException(400, "Error: unauthorized");
+            throw new ResponseException(401, "Error: unauthorized");
         }
         if (!userData.password().equals(memoryUserDAO.getUser(userData.username()).password())){
-            throw new ResponseException(400, "Error: unauthorized");
+            throw new ResponseException(401, "Error: unauthorized");
         }
         else {
             return memoryAuthDAO.addAuth(userData.username());

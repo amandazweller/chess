@@ -26,6 +26,7 @@ public class Server {
     private ListGamesService listGamesService;
     private CreateGameService createGameService;
     private JoinGameService joinGameService;
+    private ClearService clearService;
 
     public Server(){
         this.registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
@@ -34,6 +35,7 @@ public class Server {
         this.listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
         this.createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
         this.joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+        this.clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
     }
 
     public int run(int desiredPort) {
@@ -111,7 +113,8 @@ public class Server {
     }
 
     private Object clearAll(Request request, Response response) throws ResponseException, DataAccessException{
-        return null;
+        Object clearResponse = clearService.clear();
+        return new Gson().toJson(clearResponse);
     }
 
     public void stop() {
