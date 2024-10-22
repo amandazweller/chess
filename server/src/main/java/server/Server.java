@@ -27,7 +27,7 @@ public class Server {
     public Server(){
         this.registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
         this.loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
-        this.logoutService = new LogoutService(memoryUserDAO, memoryAuthDAO);
+        this.logoutService = new LogoutService(memoryAuthDAO);
         this.listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
         this.createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
     }
@@ -92,7 +92,7 @@ public class Server {
     private Object createGame(Request request, Response response) throws ResponseException, DataAccessException{
         var game = new Gson().fromJson(request.body(), GameData.class);
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
-        Object createGameResponse = createGameService.createGame(game, authToken);
+        Object createGameResponse = createGameService.createGame(game.gameName(), authToken);
         return new Gson().toJson(createGameResponse);
     }
 

@@ -8,8 +8,8 @@ import model.AuthData;
 import model.UserData;
 
 public class RegisterService {
-    private MemoryUserDAO memoryUserDAO;
-    private MemoryAuthDAO memoryAuthDAO;
+    private final MemoryUserDAO memoryUserDAO;
+    private final MemoryAuthDAO memoryAuthDAO;
 
     public RegisterService(MemoryUserDAO memoryUserDAO, MemoryAuthDAO memoryAuthDAO){
         this.memoryAuthDAO = memoryAuthDAO;
