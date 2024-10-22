@@ -35,8 +35,14 @@ public class MemoryGameDAO implements GameDAO{
         gameDataMap.clear();
     }
 
-//    public void setWhiteUsername(Integer gameID, String whiteUsername) throws DataAccessException {
-//        GameData gameData = getGame(gameID);
-//        gameData.whiteUsername() = whiteUsername;
-//    }
+    public void setWhiteUsername(Integer gameID, String whiteUsername) throws DataAccessException {
+        GameData gameData = getGame(gameID);
+        GameData updatedData = new GameData(gameID, whiteUsername, gameData.blackUsername(), gameData.gameName(), gameData.game());
+        gameDataMap.replace(gameData.gameID(), updatedData);
+    }
+    public void setBlackUsername(Integer gameID, String blackUsername) throws DataAccessException {
+        GameData gameData = getGame(gameID);
+        GameData updatedData = new GameData(gameID, gameData.whiteUsername(), blackUsername, gameData.gameName(), gameData.game());
+        gameDataMap.replace(gameData.gameID(), updatedData);
+    }
 }

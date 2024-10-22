@@ -34,9 +34,12 @@ public class JoinGameService {
             throw new ResponseException(401, "Error: unauthorized");
         }
 
-//        if (Objects.equals(playerColor, "WHITE"){
-//            memoryGameDAO.getGame(gameID).whiteUsername() = memoryAuthDAO.getAuth(authToken).username();
-//        }
+        if (Objects.equals(playerColor, "WHITE")){
+            memoryGameDAO.setWhiteUsername(gameID, memoryAuthDAO.getAuth(authToken).username());
+        }
+        if (Objects.equals(playerColor, "BLACK")){
+            memoryGameDAO.setBlackUsername(gameID, memoryAuthDAO.getAuth(authToken).username());
+        }
         return new HashMap<>();
     }
 }
