@@ -19,4 +19,8 @@ public class MemoryUserDAO implements UserDAO {
     public UserData getUser(String username) throws DataAccessException {
         return userDataMap.get(username);
     }
+
+    public void clearUsers() throws DataAccessException{
+        userDataMap.clear();
+    }
 }

@@ -28,7 +28,7 @@ public class CreateGameService {
             throw new ResponseException(401, "Error: unauthorized");
         }
         int randomInteger = (int)(Math.random() * 1000);
-        GameData gameData = new GameData(randomInteger, "", "", gameName, new ChessGame());
+        GameData gameData = new GameData(randomInteger, null, null, gameName, new ChessGame());
         memoryGameDAO.addGame(gameData);
         return gameData.gameID();
         //fix this so it returns "gameID": 1234

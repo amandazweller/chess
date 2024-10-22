@@ -30,4 +30,9 @@ public class MemoryGameDAO implements GameDAO{
     public GameData addGame(GameData gameData) throws DataAccessException{
         return gameDataMap.put(gameData.gameID(), gameData);
     }
+
+//    public void setWhiteUsername(Integer gameID, String whiteUsername) throws DataAccessException {
+//        GameData gameData = getGame(gameID);
+//        gameData.whiteUsername() = whiteUsername;
+//    }
 }
