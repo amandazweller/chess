@@ -1,13 +1,10 @@
 package dataaccess;
 
-import exceptions.ResponseException;
 import model.GameData;
-import model.UserData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
 public class MemoryGameDAO implements GameDAO{
     final private Map<Integer, GameData> gameDataMap;
@@ -15,11 +12,11 @@ public class MemoryGameDAO implements GameDAO{
     public MemoryGameDAO(){
         this.gameDataMap = new HashMap<>();
     }
-    public GameData getGame(int gameID) throws DataAccessException {
+    public GameData getGame(int gameID)  {
         return gameDataMap.get(gameID);
     }
 
-    public ArrayList<GameData> listAllGames() throws DataAccessException {
+    public ArrayList<GameData> listAllGames() {
         ArrayList<GameData> allGames = new ArrayList<>();
         for (Integer key : gameDataMap.keySet()) {
             GameData gameData = gameDataMap.get(key);
@@ -28,20 +25,20 @@ public class MemoryGameDAO implements GameDAO{
         return allGames;
     }
 
-    public GameData addGame(GameData gameData) throws DataAccessException{
+    public GameData addGame(GameData gameData) {
         return gameDataMap.put(gameData.gameID(), gameData);
     }
 
-    public void clearGames() throws DataAccessException{
+    public void clearGames() {
         gameDataMap.clear();
     }
 
-    public void setWhiteUsername(Integer gameID, String whiteUsername) throws DataAccessException {
+    public void setWhiteUsername(Integer gameID, String whiteUsername)  {
         GameData gameData = getGame(gameID);
         GameData updatedData = new GameData(gameID, whiteUsername, gameData.blackUsername(), gameData.gameName(), gameData.game());
         gameDataMap.replace(gameData.gameID(), updatedData);
     }
-    public void setBlackUsername(Integer gameID, String blackUsername) throws DataAccessException {
+    public void setBlackUsername(Integer gameID, String blackUsername)  {
         GameData gameData = getGame(gameID);
         GameData updatedData = new GameData(gameID, gameData.whiteUsername(), blackUsername, gameData.gameName(), gameData.game());
         gameDataMap.replace(gameData.gameID(), updatedData);

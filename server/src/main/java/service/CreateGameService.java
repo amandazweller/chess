@@ -1,26 +1,21 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import exceptions.ResponseException;
 import model.GameData;
-import java.util.Random;
-
-import java.util.Vector;
 
 public class CreateGameService {
-    private MemoryGameDAO memoryGameDAO;
-    private MemoryAuthDAO memoryAuthDAO;
+    private final MemoryGameDAO memoryGameDAO;
+    private final MemoryAuthDAO memoryAuthDAO;
 
     public CreateGameService(MemoryAuthDAO memoryAuthDAO, MemoryGameDAO memoryGameDAO){
         this.memoryAuthDAO = memoryAuthDAO;
         this.memoryGameDAO = memoryGameDAO;
     }
 
-    public GameData createGame(String gameName, String authToken) throws ResponseException, DataAccessException{
+    public GameData createGame(String gameName, String authToken) throws ResponseException {
         if (gameName == null){
             throw new ResponseException(400, "Error: bad request");
         }

@@ -8,9 +8,9 @@ import dataaccess.MemoryUserDAO;
 import java.util.HashMap;
 
 public class ClearService {
-    private MemoryGameDAO memoryGameDAO;
-    private MemoryAuthDAO memoryAuthDAO;
-    private MemoryUserDAO memoryUserDAO;
+    private final MemoryGameDAO memoryGameDAO;
+    private final MemoryAuthDAO memoryAuthDAO;
+    private final MemoryUserDAO memoryUserDAO;
 
     public ClearService(MemoryAuthDAO memoryAuthDAO, MemoryGameDAO memoryGameDAO, MemoryUserDAO memoryUserDAO){
         this.memoryAuthDAO = memoryAuthDAO;
@@ -18,7 +18,7 @@ public class ClearService {
         this.memoryUserDAO = memoryUserDAO;
     }
 
-    public Object clear() throws DataAccessException {
+    public Object clear() {
         memoryGameDAO.clearGames();
         memoryAuthDAO.clearAuth();
         memoryUserDAO.clearUsers();

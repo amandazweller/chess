@@ -7,11 +7,7 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.ResponseException;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Vector;
 
 import com.google.gson.JsonObject;
 
@@ -23,17 +19,17 @@ import service.*;
 import spark.*;
 
 public class Server {
-    private MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-    private MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-    private MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+    private final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
 
-    private RegisterService registerService;
-    private LoginService loginService;
-    private LogoutService logoutService;
-    private ListGamesService listGamesService;
-    private CreateGameService createGameService;
-    private JoinGameService joinGameService;
-    private ClearService clearService;
+    private final RegisterService registerService;
+    private final LoginService loginService;
+    private final LogoutService logoutService;
+    private final  ListGamesService listGamesService;
+    private final CreateGameService createGameService;
+    private final JoinGameService joinGameService;
+    private final ClearService clearService;
 
     public Server(){
         this.registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
@@ -41,7 +37,7 @@ public class Server {
         this.logoutService = new LogoutService(memoryAuthDAO);
         this.listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
         this.createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
-        this.joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+        this.joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
         this.clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
     }
 
@@ -103,14 +99,14 @@ public class Server {
         return new Gson().toJson(listGameResponse);
     }
 
-    private Object createGame(Request request, Response response) throws ResponseException, DataAccessException{
+    private Object createGame(Request request, Response response) throws ResponseException{
         var game = new Gson().fromJson(request.body(), GameData.class);
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
         GameData createGameResponse = createGameService.createGame(game.gameName(), authToken);
         return new Gson().toJson(createGameResponse);
     }
 
-    private Object joinGame(Request request, Response response) throws ResponseException, DataAccessException{
+    private Object joinGame(Request request, Response response) throws ResponseException{
         var game = new Gson().fromJson(request.body(), GameData.class);
         JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
         if (!body.has("playerColor") || body.get("playerColor").isJsonNull()) {
@@ -122,7 +118,7 @@ public class Server {
         return new Gson().toJson(joinGameResponse);
     }
 
-    private Object clearAll(Request request, Response response) throws ResponseException, DataAccessException{
+    private Object clearAll(Request request, Response response) throws ResponseException{
         Object clearResponse = clearService.clear();
         return new Gson().toJson(clearResponse);
     }

@@ -12,22 +12,22 @@ public class MemoryAuthDAO implements AuthDAO{
         this.authDataMap = new HashMap<>();
     }
 
-    public AuthData addAuth(String username) throws DataAccessException {
+    public AuthData addAuth(String username) {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData (username, authToken);
         authDataMap.put(authToken, authData);
         return authData;
     }
 
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken) {
         return authDataMap.get(authToken);
     }
 
-    public void deleteAuth(String authToken) throws DataAccessException{
+    public void deleteAuth(String authToken){
         authDataMap.remove(authToken);
     }
 
-    public void clearAuth() throws DataAccessException{
+    public void clearAuth(){
         authDataMap.clear();
     }
 }

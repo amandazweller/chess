@@ -12,15 +12,15 @@ public class MemoryUserDAO implements UserDAO {
         this.userDataMap = new HashMap<>();
     }
 
-    public void createUser(UserData userData) throws DataAccessException {
+    public void createUser(UserData userData)  {
         userDataMap.put(userData.username(), userData);
     }
 
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username){
         return userDataMap.get(username);
     }
 
-    public void clearUsers() throws DataAccessException{
+    public void clearUsers() {
         userDataMap.clear();
     }
 }
