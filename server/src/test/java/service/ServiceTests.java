@@ -103,7 +103,8 @@ public class ServiceTests {
     public void createGameNoGameName() {
         login();
         AuthData authData = loginService.getUser(userData);
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> createGameService.createGame(null, authData.authToken()));
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () ->
+                createGameService.createGame(null, authData.authToken()));
         Assertions.assertEquals("Error: bad request", exception.getMessage());
     }
 
@@ -127,7 +128,8 @@ public class ServiceTests {
         String playerColor = null;
         AuthData authData = loginService.getUser(userData);
         GameData game = createGameService.createGame(gameName3, authData.authToken());
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> joinGameService.joinGame(game.gameID(), authData.authToken(), playerColor));
+        ResponseException exception = Assertions.assertThrows(ResponseException.class, () ->
+                joinGameService.joinGame(game.gameID(), authData.authToken(), playerColor));
         Assertions.assertEquals("Error: bad request", exception.getMessage());
     }
 

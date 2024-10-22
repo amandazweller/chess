@@ -139,7 +139,6 @@ public class ValidMoves {
             row += 1;
             column -= 1;
         }
-
         return valid;
     }
     public static Collection<ChessPosition> knightMoves(ChessBoard board, ChessPosition position) {
@@ -219,13 +218,15 @@ public class ValidMoves {
                 }
                 if (column < 8) {
                     ChessPosition newPosition2 = new ChessPosition(row + 1, column + 1);
-                    if (board.getPiece(newPosition2) != null && board.getPiece(newPosition2).getTeamColor() != board.getPiece(position).getTeamColor()){
+                    if (board.getPiece(newPosition2) != null &&
+                            board.getPiece(newPosition2).getTeamColor() != board.getPiece(position).getTeamColor()){
                         valid.add(newPosition2);
                     }
                 }
                 if (column > 1) {
                     ChessPosition newPosition3 = new ChessPosition(row + 1, column - 1);
-                    if (board.getPiece(newPosition3) != null && board.getPiece(newPosition3).getTeamColor() != board.getPiece(position).getTeamColor()){
+                    if (board.getPiece(newPosition3) != null &&
+                            board.getPiece(newPosition3).getTeamColor() != board.getPiece(position).getTeamColor()){
                         valid.add(newPosition3);
                     }
                 }
@@ -247,13 +248,15 @@ public class ValidMoves {
                 }
                 if (column < 8) {
                     ChessPosition newPosition2 = new ChessPosition(row - 1, column + 1);
-                    if (board.getPiece(newPosition2) != null && board.getPiece(newPosition2).getTeamColor() != board.getPiece(position).getTeamColor()){
+                    if (board.getPiece(newPosition2) != null &&
+                            board.getPiece(newPosition2).getTeamColor() != board.getPiece(position).getTeamColor()){
                         valid.add(newPosition2);
                     }
                 }
                 if (column > 1) {
                     ChessPosition newPosition3 = new ChessPosition(row - 1, column - 1);
-                    if (board.getPiece(newPosition3) != null && board.getPiece(newPosition3).getTeamColor() != board.getPiece(position).getTeamColor()){
+                    if (board.getPiece(newPosition3) != null &&
+                            board.getPiece(newPosition3).getTeamColor() != board.getPiece(position).getTeamColor()){
                         valid.add(newPosition3);
                     }
                 }

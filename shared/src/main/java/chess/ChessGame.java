@@ -102,7 +102,8 @@ public class ChessGame {
         for (ChessMove move : allMoves){
                 if (!willCheck(move)){
                     valid.add(move);
-                    System.out.println(move.getEndPosition().getRow() + " " + move.getEndPosition().getColumn());
+                    System.out.println(move.getEndPosition().getRow() + " "
+                            + move.getEndPosition().getColumn());
                 }
         }
         return valid;
@@ -115,13 +116,16 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(i + 1, j + 1);
                 ChessPiece piece = board.getPiece(pos);
                 if (piece != null) {
-                    newBoard.addPiece(pos, new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
+                    newBoard.addPiece(pos, new ChessPiece(piece.getTeamColor(),
+                            piece.getPieceType()));
                 }
             }
         }
         ChessPosition startPosition = move.getStartPosition();
-        ChessPosition newPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
-        ChessPiece piece = new ChessPiece(newBoard.getPiece(startPosition).getTeamColor(), newBoard.getPiece(startPosition).getPieceType());
+        ChessPosition newPosition = new ChessPosition(move.getEndPosition().getRow(),
+                move.getEndPosition().getColumn());
+        ChessPiece piece = new ChessPiece(newBoard.getPiece(startPosition).getTeamColor(),
+                newBoard.getPiece(startPosition).getPieceType());
         newBoard.addPiece(move.getEndPosition(), piece);
         newBoard.grid[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
         boolean willCheck = false;
@@ -130,7 +134,8 @@ public class ChessGame {
         for (int i = 1; i < 9; i++){
             for (int j = 1; j < 9; j++){
                 ChessPosition position = new ChessPosition(i, j);
-                if (newBoard.getPiece(position) != null && newBoard.getPiece(position).getTeamColor() != board.getPiece(startPosition).getTeamColor()){
+                if (newBoard.getPiece(position) != null &&
+                        newBoard.getPiece(position).getTeamColor() != board.getPiece(startPosition).getTeamColor()){
                     Collection<ChessMove> moves = newBoard.getPiece(position).pieceMoves(newBoard, position);
                     for (ChessMove m : moves){
                         if (m.getEndPosition().equals(kingPosition)){
