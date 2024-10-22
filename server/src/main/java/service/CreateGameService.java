@@ -20,7 +20,7 @@ public class CreateGameService {
         this.memoryGameDAO = memoryGameDAO;
     }
 
-    public GameData createGame(String gameName, String authToken) throws ResponseException, DataAccessException{
+    public Object createGame(String gameName, String authToken) throws ResponseException, DataAccessException{
         if (gameName == null){
             throw new ResponseException(400, "Error: bad request");
         }
@@ -29,6 +29,8 @@ public class CreateGameService {
         }
         int randomInteger = (int)(Math.random() * 1000);
         GameData gameData = new GameData(randomInteger, "", "", gameName, new ChessGame());
-        return memoryGameDAO.addGame(gameData);
+        memoryGameDAO.addGame(gameData);
+        return gameData.gameID();
+        //fix this so it returns "gameID": 1234
     }
 }
