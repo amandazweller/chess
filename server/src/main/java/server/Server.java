@@ -6,6 +6,10 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.ResponseException;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Vector;
 
@@ -13,6 +17,7 @@ import com.google.gson.JsonObject;
 
 
 import model.GameData;
+import model.ListGameResponse;
 import model.UserData;
 import service.*;
 import spark.*;
@@ -94,7 +99,7 @@ public class Server {
 
     private Object listGames(Request request, Response response) throws ResponseException, DataAccessException{
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
-        Vector<GameData> listGameResponse = listGamesService.listAllGames(authToken);
+        ListGameResponse listGameResponse = listGamesService.listAllGames(authToken);
         return new Gson().toJson(listGameResponse);
     }
 

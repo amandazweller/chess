@@ -5,7 +5,10 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import exceptions.ResponseException;
 import model.GameData;
+import model.ListGameResponse;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Vector;
 
 public class ListGamesService {
@@ -17,11 +20,12 @@ public class ListGamesService {
         this.memoryGameDAO = memoryGameDAO;
     }
 
-    public Vector<GameData> listAllGames(String authToken) throws ResponseException, DataAccessException {
+    public ListGameResponse listAllGames(String authToken) throws ResponseException, DataAccessException {
         if (memoryAuthDAO.getAuth(authToken) == null){
             throw new ResponseException(401, "Error: unauthorized");
         }
-        return memoryGameDAO.listAllGames();
+        ListGameResponse listGameResponse = new ListGameResponse(memoryGameDAO.listAllGames());
+        return listGameResponse;
     }
 
 

@@ -4,6 +4,7 @@ import exceptions.ResponseException;
 import model.GameData;
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -18,14 +19,11 @@ public class MemoryGameDAO implements GameDAO{
         return gameDataMap.get(gameID);
     }
 
-    public Vector<GameData> listAllGames() throws DataAccessException {
-        Vector<GameData> allGames = new Vector<>();
+    public ArrayList<GameData> listAllGames() throws DataAccessException {
+        ArrayList<GameData> allGames = new ArrayList<>();
         for (Integer key : gameDataMap.keySet()) {
             GameData gameData = gameDataMap.get(key);
             allGames.add(gameData);
-        }
-        if (allGames.isEmpty()){
-            return null;
         }
         return allGames;
     }
