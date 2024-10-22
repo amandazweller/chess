@@ -168,11 +168,4 @@ public class ServiceTests {
         clearService.clear();
         Assertions.assertEquals(memoryGameDAO.listAllGames().isEmpty(), true);
     }
-
-    @Test
-    @DisplayName("Clear Fail")
-    public void ClearFail() {
-        clearService.clear();
-        Assertions.assertEquals(memoryGameDAO.listAllGames().isEmpty(), true);
-    }
 }
