@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 import com.google.gson.Gson;
@@ -12,21 +13,16 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 
-public class MySqlGameDAO implements GameDAO{
-    public MySqlGameDAO() throws ResponseException, DataAccessException {
+public class MySqlAuthDAO implements AuthDAO{
+    public MySqlAuthDAO() throws ResponseException, DataAccessException {
         configureDatabase();
     }
-    public GameData getGame(int gameID) throws DataAccessException {
+
+    public AuthData addAuth(String authToken) throws DataAccessException {
         return null;
     }
 
-
-    public ArrayList<GameData> listAllGames() throws DataAccessException {
-        return null;
-    }
-
-
-    public GameData addGame(GameData gameData) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws DataAccessException {
         return null;
     }
 
@@ -56,14 +52,12 @@ public class MySqlGameDAO implements GameDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
+            CREATE TABLE IF NOT EXISTS  authData (
               `username` string NOT NULL,
-              `password` string NOT NULL,
-              `email`  string NOT NULL
+              `authToken` string NOT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`),
-              INDEX(password),
-              INDEX(email)
+              INDEX(authToken),
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -80,7 +74,6 @@ public class MySqlGameDAO implements GameDAO{
             throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
-
 
 
 }

@@ -1,32 +1,29 @@
 package dataaccess;
 
-import model.GameData;
 import model.UserData;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 
-public class MySqlGameDAO implements GameDAO{
-    public MySqlGameDAO() throws ResponseException, DataAccessException {
+public class MySqlUserDAO implements UserDAO{
+    public MySqlUserDAO() throws ResponseException, DataAccessException {
         configureDatabase();
     }
-    public GameData getGame(int gameID) throws DataAccessException {
-        return null;
+
+    public void createUser(UserData userData) throws DataAccessException {
+        var statement = "INSERT INTO pet (name, type, json) VALUES (?, ?, ?)";
+        var json = new Gson().toJson(userData);
+        var id = executeUpdate(statement, userData.username(), userData.password(), userData.email(), json);
+        //return new User(id, userData.password(), userData.email());
     }
 
 
-    public ArrayList<GameData> listAllGames() throws DataAccessException {
-        return null;
-    }
-
-
-    public GameData addGame(GameData gameData) throws DataAccessException {
+    public UserData getUser(String username) throws DataAccessException {
         return null;
     }
 
@@ -80,7 +77,4 @@ public class MySqlGameDAO implements GameDAO{
             throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
-
-
-
 }
