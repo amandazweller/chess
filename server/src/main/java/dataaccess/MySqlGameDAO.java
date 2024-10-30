@@ -56,14 +56,18 @@ public class MySqlGameDAO implements GameDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
-              `username` string NOT NULL,
-              `password` string NOT NULL,
-              `email`  string NOT NULL
+            CREATE TABLE IF NOT EXISTS  gameData (
+              `gameID` int NOT NULL,
+              `whiteUsername` string,
+              `blackUsername`  string,
+              `gameName` string NOT NULL,
+              'game' ChessGame,
               `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`username`),
-              INDEX(password),
-              INDEX(email)
+              PRIMARY KEY (`gameID`),
+              INDEX(whiteUsername),
+              INDEX(blackUsername),
+              INDEX(gameName),
+              INDEX(game),
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
