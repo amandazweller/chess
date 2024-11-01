@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 import model.UserData;
 import com.google.gson.Gson;
@@ -38,12 +39,16 @@ public class MySqlGameDAO implements GameDAO{
     public ArrayList<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> games = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT json FROM gameData";
+            var statement = "SELECT * FROM gameData";
             try (var ps = conn.prepareStatement(statement);
                  var rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    var json = rs.getString("json");
-                    var gameData = new Gson().fromJson(json, GameData.class);
+                    int gameId = rs.getInt("gameID");
+                    String whiteUsername = rs.getString("whiteUsername;");
+                    String blackUsername = rs.getString("blackUsername;");
+                    String gameName = rs.getString("gameName");
+                    ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+                    GameData gameData = new GameData(gameId, whiteUsername, blackUsername, gameName, game);
                     games.add(gameData);
                 }
             }
@@ -55,9 +60,8 @@ public class MySqlGameDAO implements GameDAO{
 
 
     public GameData addGame(GameData gameData) throws DataAccessException {
-        var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game, json) VALUES (?, ?, ?, ?, ?, ?)";
-        var json = new Gson().toJson(gameData);
-        executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), json);
+        var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
         return gameData;
     }
 
@@ -90,6 +94,7 @@ public class MySqlGameDAO implements GameDAO{
                     if (param instanceof String p) ps.setString(i + 1, p);
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
                     else if (param instanceof UserData p) ps.setString(i + 1, p.toString());
+                    else if (param instanceof ChessGame p) ps.setString(i + 1, new Gson().toJson(p));
                     else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
