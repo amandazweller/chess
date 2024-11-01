@@ -26,13 +26,15 @@ public class MySqlUserDAO implements UserDAO{
 
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT json FROM userData WHERE username=?";
+            var statement = "SELECT * FROM userData WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        var json = rs.getString("json");
-                        return new Gson().fromJson(json, UserData.class);
+                        String password = rs.getString("password");
+                        String email = rs.getString("email");
+                        UserData userData = new UserData(username, password, email);
+                        return userData;
                     }
                 }
             }

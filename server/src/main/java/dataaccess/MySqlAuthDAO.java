@@ -22,21 +22,20 @@ public class MySqlAuthDAO implements AuthDAO{
     public AuthData addAuth(String username) throws DataAccessException {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData (username, authToken);
-        var statement = "INSERT INTO authData (authToken, username, json) VALUES (?, ?, ?)";
-        var json = new Gson().toJson(authData);
-        executeUpdate(statement, authData.authToken(), authData.username(), json);
+        var statement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
+        executeUpdate(statement, authData.authToken(), authData.username());
         return authData;
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT json FROM authData WHERE authToken=?";
+            var statement = "SELECT * FROM authData WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        var json = rs.getString("json");
-                        return new Gson().fromJson(json, AuthData.class);
+                        String username = rs.getString("username");
+                        return new AuthData(username, authToken);
                     }
                 }
             }

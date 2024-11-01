@@ -19,13 +19,28 @@ public class MySqlGameDAO implements GameDAO{
     }
     public GameData getGame(int gameID) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT json FROM gameData WHERE gameID=?";
+            var statement = "SELECT * FROM gameData WHERE gameID=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        var json = rs.getString("json");
-                        return new Gson().fromJson(json, GameData.class);
+                        String whiteUsername;
+                        String blackUsername;
+                        if (rs.getString("whiteUsername") == null){
+                            whiteUsername = null;
+                        }
+                        else {
+                            whiteUsername = rs.getString("whiteUsername;");
+                        }
+                        if (rs.getString("blackUsername") == null){
+                            blackUsername = null;
+                        }
+                        else {
+                            blackUsername = rs.getString("blackUsername;");
+                        }
+                        String gameName = rs.getString("gameName");
+                        ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
+                        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
                     }
                 }
             }
@@ -44,20 +59,8 @@ public class MySqlGameDAO implements GameDAO{
                  var rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int gameId = rs.getInt("gameID");
-                    String whiteUsername;
-                    String blackUsername;
-                    if (rs.getString("whiteUsername") == null){
-                        whiteUsername = null;
-                    }
-                    else {
-                        whiteUsername = rs.getString("whiteUsername;");
-                    }
-                    if (rs.getString("blackUsername") == null){
-                        blackUsername = null;
-                    }
-                    else {
-                        blackUsername = rs.getString("blackUsername;");
-                    }
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
                     String gameName = rs.getString("gameName");
                     ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
                     GameData gameData = new GameData(gameId, whiteUsername, blackUsername, gameName, game);
