@@ -15,11 +15,11 @@ public class MySqlUserDAO implements UserDAO{
         configureDatabase();
     }
 
-    public void createUser(UserData userData) throws DataAccessException {
-        var statement = "INSERT INTO pet (name, type, json) VALUES (?, ?, ?)";
+    public UserData createUser(UserData userData) throws DataAccessException {
+        var statement = "INSERT INTO user (username, password, email, json) VALUES (?, ?, ?, ?)";
         var json = new Gson().toJson(userData);
         var id = executeUpdate(statement, userData.username(), userData.password(), userData.email(), json);
-        //return new User(id, userData.password(), userData.email());
+        return new UserData(userData.username(), userData.password(), userData.email());
     }
 
 
