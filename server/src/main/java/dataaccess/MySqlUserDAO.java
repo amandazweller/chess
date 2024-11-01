@@ -24,7 +24,27 @@ public class MySqlUserDAO implements UserDAO{
 
 
     public UserData getUser(String username) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT useranme, json FROM userData WHERE username=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readUserData(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        }
         return null;
+    }
+
+    private UserData readUserData(ResultSet rs) throws SQLException, DataAccessException {
+        var username = rs.getString("username");
+        var json = rs.getString("json");
+        var userData = new Gson().fromJson(json, UserData.class);
+        return getUser(username);
     }
 
     private int executeUpdate(String statement, Object... params) throws ResponseException {
