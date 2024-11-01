@@ -18,12 +18,12 @@ public class MySqlUserDAO implements UserDAO{
     }
 
     public UserData createUser(UserData userData) throws DataAccessException {
-        var statement = "INSERT INTO userData (username, password, email, json) VALUES (?, ?, ?, ?)";
+        String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+        var statement = "INSERT INTO userData (username, password, email) VALUES (?, ?, ?)";
         var json = new Gson().toJson(userData);
-        var id = executeUpdate(statement, userData.username(), userData.password(), userData.email(), json);
-        return new UserData(userData.username(), userData.password(), userData.email());
+        executeUpdate(statement, userData.username(), hashedPassword, userData.email());
+        return new UserData(userData.username(), hashedPassword, userData.email());
     }
-
 
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
