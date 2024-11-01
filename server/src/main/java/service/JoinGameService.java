@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.*;
 import exceptions.ResponseException;
 
 import java.util.HashMap;
@@ -18,7 +15,7 @@ public class JoinGameService {
         this.memoryGameDAO = memoryGameDAO;
     }
 
-    public Object joinGame(Integer gameID, String authToken, String playerColor) throws ResponseException {
+    public Object joinGame(Integer gameID, String authToken, String playerColor) throws ResponseException, DataAccessException {
         if (gameID == null || authToken == null || playerColor == null){
             throw new ResponseException(400, "Error: bad request");
         }

@@ -1,10 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.*;
 import exceptions.ResponseException;
 import model.GameData;
 
@@ -17,7 +14,7 @@ public class CreateGameService {
         this.memoryGameDAO = memoryGameDAO;
     }
 
-    public GameData createGame(String gameName, String authToken) throws ResponseException {
+    public GameData createGame(String gameName, String authToken) throws ResponseException, DataAccessException {
         if (gameName == null){
             throw new ResponseException(400, "Error: bad request");
         }

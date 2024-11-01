@@ -63,19 +63,14 @@ public class DatabaseManager {
      */
 
 
-    static Connection getConnection() throws DataAccessException, SQLException {
-        return DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
-    }
-
-    void makeSQLCalls() throws SQLException {
-        try (var conn = getConnection()) {
+    static Connection getConnection() throws DataAccessException {
+        try {
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
             conn.setCatalog(DATABASE_NAME);
+            return conn;
         } catch (SQLException e) {
             throw new ResponseException(500, e.getMessage());
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
-        // Execute SQL statements on the connection here
     }
 }
 

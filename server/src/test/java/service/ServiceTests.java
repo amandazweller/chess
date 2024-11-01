@@ -1,4 +1,5 @@
 package service;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -33,7 +34,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Register Success")
-    public void register (){
+    public void register () throws DataAccessException {
         registerService.addUser(userData);
         Assertions.assertEquals(memoryUserDAO.getUser(username).username(), username);
         Assertions.assertEquals(memoryUserDAO.getUser(username).password(), password);
@@ -53,7 +54,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Login Success")
-    public void login () {
+    public void login () throws DataAccessException {
         register();
         loginService.getUser(userData);
         Assertions.assertEquals(memoryUserDAO.getUser(username).username(), username);
@@ -63,7 +64,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Login Fail")
-    public void loginFailWrongPassword () {
+    public void loginFailWrongPassword () throws DataAccessException {
         register();
         UserData failData = new UserData(username, "incorrectPassword", email);
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> loginService.getUser(failData));
@@ -73,7 +74,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Logout Success")
-    public void logout() {
+    public void logout() throws DataAccessException {
         register();
         AuthData authData = loginService.getUser(userData);
         logoutService.logoutUser(authData.authToken());
@@ -90,7 +91,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Create Game Success")
-    public void createGame() {
+    public void createGame() throws DataAccessException {
         login();
         AuthData authData = loginService.getUser(userData);
         GameData currGameData = createGameService.createGame(gameName, authData.authToken());
@@ -100,7 +101,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Create Game Fail")
-    public void createGameNoGameName() {
+    public void createGameNoGameName() throws DataAccessException {
         login();
         AuthData authData = loginService.getUser(userData);
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () ->
@@ -110,7 +111,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Join Game Success")
-    public void joinGame() {
+    public void joinGame() throws DataAccessException {
         login();
         String gameName2 = "gameName2";
         String playerColor = "WHITE";
@@ -122,7 +123,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Join Game Fail")
-    public void joinGameNoPlayerColor() {
+    public void joinGameNoPlayerColor() throws DataAccessException {
         login();
         String gameName3 = "gameName3";
         String playerColor = null;
@@ -135,16 +136,16 @@ public class ServiceTests {
 
     @Test
     @DisplayName("List Games Success")
-    public void listGames() {
+    public void listGames() throws DataAccessException {
         login();
         AuthData authData = loginService.getUser(userData);
         ListGameResponse listGameResponse = listGamesService.listAllGames(authData.authToken());
-        Assertions.assertEquals(listGameResponse.games(), memoryGameDAO.listAllGames());
+        Assertions.assertEquals(listGameResponse.games(), memoryGameDAO.listGames());
     }
 
     @Test
     @DisplayName("List Games Fail")
-    public void listAllGamesWrongAuth() {
+    public void listAllGamesWrongAuth() throws DataAccessException {
         login();
         String authToken = "nothing";
         ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> listGamesService.listAllGames(authToken));
@@ -153,8 +154,8 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Clear Success")
-    public void clear() {
+    public void clear() throws DataAccessException {
         clearService.clear();
-        Assertions.assertTrue(memoryGameDAO.listAllGames().isEmpty());
+        Assertions.assertTrue(memoryGameDAO.listGames().isEmpty());
     }
 }

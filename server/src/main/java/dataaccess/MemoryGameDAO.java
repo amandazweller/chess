@@ -16,7 +16,7 @@ public class MemoryGameDAO implements GameDAO{
         return gameDataMap.get(gameID);
     }
 
-    public ArrayList<GameData> listAllGames() {
+    public ArrayList<GameData> listGames() {
         ArrayList<GameData> allGames = new ArrayList<>();
         for (Integer key : gameDataMap.keySet()) {
             GameData gameData = gameDataMap.get(key);

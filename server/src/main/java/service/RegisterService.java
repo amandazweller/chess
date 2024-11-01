@@ -19,7 +19,7 @@ public class RegisterService {
         if (userData.username() == null || userData.email() == null || userData.password() == null){
             throw new ResponseException(400, "Error: bad request");
         }
-        if (MySqlUserDAO.getUser(userData.username()) == null){
+        if (userDAO.getUser(userData.username()) == null){
             userDAO.createUser(userData);
             return authDAO.addAuth(userData.username());
         }

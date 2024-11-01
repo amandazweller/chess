@@ -91,7 +91,6 @@ public class MySqlAuthDAO implements AuthDAO{
             CREATE TABLE IF NOT EXISTS  authData (
               `username`VARCHAR(255) NOT NULL,
               `authToken` VARCHAR(255) NOT NULL,
-              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`),
               INDEX(authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

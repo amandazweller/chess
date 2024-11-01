@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
+import dataaccess.*;
 import exceptions.ResponseException;
 import model.ListGameResponse;
 
@@ -17,11 +14,11 @@ public class ListGamesService {
         this.memoryGameDAO = memoryGameDAO;
     }
 
-    public ListGameResponse listAllGames(String authToken) throws ResponseException {
+    public ListGameResponse listAllGames(String authToken) throws ResponseException, DataAccessException {
         if (memoryAuthDAO.getAuth(authToken) == null){
             throw new ResponseException(401, "Error: unauthorized");
         }
-        return new ListGameResponse(memoryGameDAO.listAllGames());
+        return new ListGameResponse(memoryGameDAO.listGames());
     }
 
 

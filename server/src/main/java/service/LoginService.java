@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.UserData;
@@ -17,7 +14,7 @@ public class LoginService {
         this.memoryUserDAO = memoryUserDAO;
     }
 
-    public AuthData getUser(UserData userData) throws ResponseException{
+    public AuthData getUser(UserData userData) throws ResponseException, DataAccessException {
         if (memoryUserDAO.getUser(userData.username()) == null){
             throw new ResponseException(401, "Error: unauthorized");
         }

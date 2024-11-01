@@ -35,7 +35,7 @@ public class MySqlGameDAO implements GameDAO{
     }
 
 
-    public ArrayList<GameData> listAllGames() throws DataAccessException {
+    public ArrayList<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> games = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT json FROM gameData";
@@ -113,13 +113,11 @@ public class MySqlGameDAO implements GameDAO{
               `whiteUsername` VARCHAR(255),
               `blackUsername`  VARCHAR(255),
               `gameName` VARCHAR(255) NOT NULL,
-              'game' TEXT DEFAULT NULL,
-              `json` TEXT DEFAULT NULL,
+              `game` TEXT DEFAULT NULL,
               PRIMARY KEY (`gameID`),
               INDEX(whiteUsername),
               INDEX(blackUsername),
-              INDEX(gameName),
-              INDEX(game),
+              INDEX(gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

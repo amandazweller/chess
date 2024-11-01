@@ -25,18 +25,24 @@ public class Server {
     private final JoinGameService joinGameService;
     private final ClearService clearService;
 
-    public Server() throws DataAccessException {
-        AuthDAO authDAO = new MySqlAuthDAO();
-        UserDAO userDAO = new MySqlUserDAO();
-        GameDAO gameDAO = new MySqlGameDAO();
+    public Server(){
+        try {
+            AuthDAO authDAO = new MySqlAuthDAO();
+            UserDAO userDAO = new MySqlUserDAO();
+            GameDAO gameDAO = new MySqlGameDAO();
 
-        this.registerService = new RegisterService(userDAO, authDAO);
-        this.loginService = new LoginService(userDAO, authDAO);
-        this.logoutService = new LogoutService(authDAO);
-        this.listGamesService = new ListGamesService(authDAO, gameDAO);
-        this.createGameService = new CreateGameService(authDAO, gameDAO);
-        this.joinGameService = new JoinGameService(authDAO, gameDAO);
-        this.clearService = new ClearService(authDAO, gameDAO, userDAO);
+            this.registerService = new RegisterService(userDAO, authDAO);
+            this.loginService = new LoginService(userDAO, authDAO);
+            this.logoutService = new LogoutService(authDAO);
+            this.listGamesService = new ListGamesService(authDAO, gameDAO);
+            this.createGameService = new CreateGameService(authDAO, gameDAO);
+            this.joinGameService = new JoinGameService(authDAO, gameDAO);
+            this.clearService = new ClearService(authDAO, gameDAO, userDAO);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+
 
     }
 
@@ -98,14 +104,14 @@ public class Server {
         return new Gson().toJson(listGameResponse);
     }
 
-    private Object createGame(Request request, Response response) throws ResponseException{
+    private Object createGame(Request request, Response response) throws ResponseException, DataAccessException {
         var game = new Gson().fromJson(request.body(), GameData.class);
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
         GameData createGameResponse = createGameService.createGame(game.gameName(), authToken);
         return new Gson().toJson(createGameResponse);
     }
 
-    private Object joinGame(Request request, Response response) throws ResponseException{
+    private Object joinGame(Request request, Response response) throws ResponseException, DataAccessException {
         var game = new Gson().fromJson(request.body(), GameData.class);
         JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
         if (!body.has("playerColor") || body.get("playerColor").isJsonNull()) {
@@ -117,7 +123,7 @@ public class Server {
         return new Gson().toJson(joinGameResponse);
     }
 
-    private Object clearAll(Request request, Response response) throws ResponseException{
+    private Object clearAll(Request request, Response response) throws ResponseException, DataAccessException {
         Object clearResponse = clearService.clear();
         return new Gson().toJson(clearResponse);
     }

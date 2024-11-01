@@ -82,7 +82,6 @@ public class MySqlUserDAO implements UserDAO{
               `username` VARCHAR(255) NOT NULL,
               `password` VARCHAR(255) NOT NULL,
               `email`  VARCHAR(255) NOT NULL,
-              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`),
               INDEX(password),
               INDEX(email)
