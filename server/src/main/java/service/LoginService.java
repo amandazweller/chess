@@ -1,16 +1,18 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.UserData;
 
 public class LoginService {
-    private final MemoryUserDAO memoryUserDAO;
-    private final MemoryAuthDAO memoryAuthDAO;
+    private final UserDAO memoryUserDAO;
+    private final AuthDAO memoryAuthDAO;
 
-    public LoginService(MemoryUserDAO memoryUserDAO, MemoryAuthDAO memoryAuthDAO){
+    public LoginService(UserDAO memoryUserDAO, AuthDAO memoryAuthDAO){
         this.memoryAuthDAO = memoryAuthDAO;
         this.memoryUserDAO = memoryUserDAO;
     }

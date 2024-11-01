@@ -17,17 +17,69 @@ public class MySqlGameDAO implements GameDAO{
         configureDatabase();
     }
     public GameData getGame(int gameID) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM gameData WHERE gameID=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var json = rs.getString("json");
+                        return new Gson().fromJson(json, GameData.class);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to get game: %s", e.getMessage()));
+        }
         return null;
     }
 
 
     public ArrayList<GameData> listAllGames() throws DataAccessException {
-        return null;
+        ArrayList<GameData> games = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM gameData";
+            try (var ps = conn.prepareStatement(statement);
+                 var rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    var json = rs.getString("json");
+                    var gameData = new Gson().fromJson(json, GameData.class);
+                    games.add(gameData);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to list all games: %s", e.getMessage()));
+        }
+        return games;
     }
 
 
     public GameData addGame(GameData gameData) throws DataAccessException {
-        return null;
+        var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game, json) VALUES (?, ?, ?, ?, ?, ?)";
+        var json = new Gson().toJson(gameData);
+        executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), json);
+        return gameData;
+    }
+
+    public void clearGames() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "DELETE FROM gameData";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to clear games: %s", e.getMessage()));
+        }
+    }
+
+    public void setWhiteUsername(Integer gameID, String whiteUsername) {
+        var statement = "UPDATE gameData SET whiteUsername = ? WHERE gameID = ?";
+        executeUpdate(statement, whiteUsername, gameID);
+    }
+
+    public void setBlackUsername(Integer gameID, String blackUsername) {
+        var statement = "UPDATE gameData SET blackUsername = ? WHERE gameID = ?";
+        executeUpdate(statement, blackUsername, gameID);
     }
 
     private int executeUpdate(String statement, Object... params) throws ResponseException {
@@ -58,10 +110,10 @@ public class MySqlGameDAO implements GameDAO{
             """
             CREATE TABLE IF NOT EXISTS  gameData (
               `gameID` int NOT NULL,
-              `whiteUsername` string,
-              `blackUsername`  string,
-              `gameName` string NOT NULL,
-              'game' ChessGame,
+              `whiteUsername` VARCHAR(255),
+              `blackUsername`  VARCHAR(255),
+              `gameName` VARCHAR(255) NOT NULL,
+              'game' TEXT DEFAULT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`gameID`),
               INDEX(whiteUsername),

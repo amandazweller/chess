@@ -8,6 +8,7 @@ import exceptions.ResponseException;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -18,12 +19,47 @@ public class MySqlAuthDAO implements AuthDAO{
         configureDatabase();
     }
 
-    public AuthData addAuth(String authToken) throws DataAccessException {
-        return null;
+    public AuthData addAuth(String username) throws DataAccessException {
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData (username, authToken);
+        var statement = "INSERT INTO authData (authToken, username, json) VALUES (?, ?, ?)";
+        var json = new Gson().toJson(authData);
+        executeUpdate(statement, authData.authToken(), authData.username(), json);
+        return authData;
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT json FROM authData WHERE authToken=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var json = rs.getString("json");
+                        return new Gson().fromJson(json, AuthData.class);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to get auth data: %s", e.getMessage()));
+        }
         return null;
+    }
+
+    public void deleteAuth(String authToken) {
+        var statement = "DELETE FROM authData WHERE authToken = ?";
+        executeUpdate(statement, authToken);
+    }
+
+    public void clearAuth() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "DELETE FROM authData";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to clear auth data: %s", e.getMessage()));
+        }
     }
 
     private int executeUpdate(String statement, Object... params) throws ResponseException {
@@ -53,11 +89,11 @@ public class MySqlAuthDAO implements AuthDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  authData (
-              `username` string NOT NULL,
-              `authToken` string NOT NULL,
+              `username`VARCHAR(255) NOT NULL,
+              `authToken` VARCHAR(255) NOT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`),
-              INDEX(authToken),
+              INDEX(authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

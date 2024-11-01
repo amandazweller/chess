@@ -1,5 +1,7 @@
 package service;
 
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import exceptions.ResponseException;
@@ -7,10 +9,10 @@ import model.ListGameResponse;
 
 
 public class ListGamesService {
-    private final MemoryGameDAO memoryGameDAO;
-    private final MemoryAuthDAO memoryAuthDAO;
+    private final GameDAO memoryGameDAO;
+    private final AuthDAO memoryAuthDAO;
 
-    public ListGamesService(MemoryAuthDAO memoryAuthDAO, MemoryGameDAO memoryGameDAO){
+    public ListGamesService(AuthDAO memoryAuthDAO, GameDAO memoryGameDAO){
         this.memoryAuthDAO = memoryAuthDAO;
         this.memoryGameDAO = memoryGameDAO;
     }

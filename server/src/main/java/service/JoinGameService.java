@@ -1,5 +1,7 @@
 package service;
 
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import exceptions.ResponseException;
@@ -8,10 +10,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class JoinGameService {
-    private final MemoryGameDAO memoryGameDAO;
-    private final MemoryAuthDAO memoryAuthDAO;
+    private final GameDAO memoryGameDAO;
+    private final AuthDAO memoryAuthDAO;
 
-    public JoinGameService(MemoryAuthDAO memoryAuthDAO, MemoryGameDAO memoryGameDAO){
+    public JoinGameService(AuthDAO memoryAuthDAO, GameDAO memoryGameDAO){
         this.memoryAuthDAO = memoryAuthDAO;
         this.memoryGameDAO = memoryGameDAO;
     }

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.GameData;
 import model.UserData;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
@@ -16,7 +17,7 @@ public class MySqlUserDAO implements UserDAO{
     }
 
     public UserData createUser(UserData userData) throws DataAccessException {
-        var statement = "INSERT INTO user (username, password, email, json) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO userData (username, password, email, json) VALUES (?, ?, ?, ?)";
         var json = new Gson().toJson(userData);
         var id = executeUpdate(statement, userData.username(), userData.password(), userData.email(), json);
         return new UserData(userData.username(), userData.password(), userData.email());
@@ -25,26 +26,31 @@ public class MySqlUserDAO implements UserDAO{
 
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT useranme, json FROM userData WHERE username=?";
+            var statement = "SELECT json FROM userData WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readUserData(rs);
+                        var json = rs.getString("json");
+                        return new Gson().fromJson(json, UserData.class);
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to retrieve user: %s", e.getMessage()));
         }
         return null;
     }
 
-    private UserData readUserData(ResultSet rs) throws SQLException, DataAccessException {
-        var username = rs.getString("username");
-        var json = rs.getString("json");
-        var userData = new Gson().fromJson(json, UserData.class);
-        return getUser(username);
+    public void clearUsers() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "DELETE FROM userData";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("Unable to clear users: %s", e.getMessage()));
+        }
     }
 
     private int executeUpdate(String statement, Object... params) throws ResponseException {
@@ -54,7 +60,6 @@ public class MySqlUserDAO implements UserDAO{
                     var param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param instanceof UserData p) ps.setString(i + 1, p.toString());
                     else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
@@ -73,10 +78,10 @@ public class MySqlUserDAO implements UserDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
-              `username` string NOT NULL,
-              `password` string NOT NULL,
-              `email`  string NOT NULL
+            CREATE TABLE IF NOT EXISTS  userData (
+              `username` VARCHAR(255) NOT NULL,
+              `password` VARCHAR(255) NOT NULL,
+              `email`  VARCHAR(255) NOT NULL,
               `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`),
               INDEX(password),

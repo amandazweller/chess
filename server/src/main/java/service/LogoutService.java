@@ -1,14 +1,15 @@
 package service;
 
+import dataaccess.AuthDAO;
 import dataaccess.MemoryAuthDAO;
 import exceptions.ResponseException;
 
 import java.util.HashMap;
 
 public class LogoutService {
-    private final MemoryAuthDAO memoryAuthDAO;
+    private final AuthDAO memoryAuthDAO;
 
-    public LogoutService (MemoryAuthDAO memoryAuthDAO){
+    public LogoutService (AuthDAO memoryAuthDAO){
         this.memoryAuthDAO = memoryAuthDAO;
     }
 

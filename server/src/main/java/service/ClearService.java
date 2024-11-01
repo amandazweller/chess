@@ -1,24 +1,21 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 
 import java.util.HashMap;
 
 public class ClearService {
-    private final MemoryGameDAO memoryGameDAO;
-    private final MemoryAuthDAO memoryAuthDAO;
-    private final MemoryUserDAO memoryUserDAO;
+    private final GameDAO memoryGameDAO;
+    private final AuthDAO memoryAuthDAO;
+    private final UserDAO memoryUserDAO;
 
-    public ClearService(MemoryAuthDAO memoryAuthDAO, MemoryGameDAO memoryGameDAO, MemoryUserDAO memoryUserDAO){
+    public ClearService(AuthDAO memoryAuthDAO, GameDAO memoryGameDAO, UserDAO memoryUserDAO){
         this.memoryAuthDAO = memoryAuthDAO;
         this.memoryGameDAO = memoryGameDAO;
         this.memoryUserDAO = memoryUserDAO;
     }
 
-    public Object clear() {
+    public Object clear() throws DataAccessException {
         memoryGameDAO.clearGames();
         memoryAuthDAO.clearAuth();
         memoryUserDAO.clearUsers();

@@ -1,10 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import exceptions.ResponseException;
 
 import java.util.Map;
@@ -19,9 +16,6 @@ import service.*;
 import spark.*;
 
 public class Server {
-    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-    private final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
 
     private final RegisterService registerService;
     private final LoginService loginService;
@@ -31,14 +25,19 @@ public class Server {
     private final JoinGameService joinGameService;
     private final ClearService clearService;
 
-    public Server(){
-        this.registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
-        this.loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
-        this.logoutService = new LogoutService(memoryAuthDAO);
-        this.listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
-        this.createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
-        this.joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
-        this.clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+    public Server() throws DataAccessException {
+        AuthDAO authDAO = new MySqlAuthDAO();
+        UserDAO userDAO = new MySqlUserDAO();
+        GameDAO gameDAO = new MySqlGameDAO();
+
+        this.registerService = new RegisterService(userDAO, authDAO);
+        this.loginService = new LoginService(userDAO, authDAO);
+        this.logoutService = new LogoutService(authDAO);
+        this.listGamesService = new ListGamesService(authDAO, gameDAO);
+        this.createGameService = new CreateGameService(authDAO, gameDAO);
+        this.joinGameService = new JoinGameService(authDAO, gameDAO);
+        this.clearService = new ClearService(authDAO, gameDAO, userDAO);
+
     }
 
     public int run(int desiredPort) {
