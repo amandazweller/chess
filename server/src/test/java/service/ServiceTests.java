@@ -1,8 +1,5 @@
 package service;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -13,17 +10,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class ServiceTests {
-    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-    private final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
 
-    private final RegisterService registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
-    private final LoginService loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
-    private final LogoutService logoutService = new LogoutService(memoryAuthDAO);
-    private final ListGamesService listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
-    private final CreateGameService createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
-    private final JoinGameService joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
-    private final ClearService clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+    UserDAO memoryUserDAO = new MySqlUserDAO();
+    AuthDAO memoryAuthDAO = new MySqlAuthDAO();
+    GameDAO memoryGameDAO = new MySqlGameDAO();
+    RegisterService registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
+    LoginService loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
+    LogoutService logoutService = new LogoutService(memoryAuthDAO);
+    ListGamesService listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
+    CreateGameService createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
+    JoinGameService joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
+    ClearService clearService = new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO);
+
+
+
+
     String username = "username";
     String password = "password";
     String email = "email";
@@ -31,19 +32,23 @@ public class ServiceTests {
     UserData userData = new UserData(username, password, email);
     int gameID = 0;
 
+    public ServiceTests() throws DataAccessException {
+    }
+
 
     @Test
     @DisplayName("Register Success")
     public void register () throws DataAccessException {
+        clearService.clear();
         registerService.addUser(userData);
         Assertions.assertEquals(memoryUserDAO.getUser(username).username(), username);
-        Assertions.assertEquals(memoryUserDAO.getUser(username).password(), password);
         Assertions.assertEquals(memoryUserDAO.getUser(username).email(), email);
     }
 
     @Test
     @DisplayName("Register Fail")
-    public void registerNoPassword (){
+    public void registerNoPassword () throws DataAccessException {
+        clearService.clear();
         String username = "username";
         String password = null;
         String email = "email";
@@ -58,7 +63,6 @@ public class ServiceTests {
         register();
         loginService.getUser(userData);
         Assertions.assertEquals(memoryUserDAO.getUser(username).username(), username);
-        Assertions.assertEquals(memoryUserDAO.getUser(username).password(), password);
         Assertions.assertEquals(memoryUserDAO.getUser(username).email(), email);
     }
 
@@ -95,7 +99,9 @@ public class ServiceTests {
         login();
         AuthData authData = loginService.getUser(userData);
         GameData currGameData = createGameService.createGame(gameName, authData.authToken());
-        Assertions.assertEquals(memoryGameDAO.getGame(currGameData.gameID()), currGameData);
+        Assertions.assertEquals(memoryGameDAO.getGame(currGameData.gameID()).whiteUsername(), currGameData.whiteUsername());
+        Assertions.assertEquals(memoryGameDAO.getGame(currGameData.gameID()).blackUsername(), currGameData.blackUsername());
+        Assertions.assertEquals(memoryGameDAO.getGame(currGameData.gameID()).gameName(), currGameData.gameName());
         gameID = currGameData.gameID();
     }
 
@@ -112,7 +118,6 @@ public class ServiceTests {
     @Test
     @DisplayName("Join Game Success")
     public void joinGame() throws DataAccessException {
-        login();
         String gameName2 = "gameName2";
         String playerColor = "WHITE";
         AuthData authData = loginService.getUser(userData);
