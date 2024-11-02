@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
 import exceptions.ResponseException;
 
 import java.util.HashMap;
