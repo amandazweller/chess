@@ -1,9 +1,7 @@
 package dataaccess;
 import org.mindrot.jbcrypt.BCrypt;
 
-import model.GameData;
 import model.UserData;
-import com.google.gson.Gson;
 import exceptions.ResponseException;
 
 import java.sql.*;
@@ -17,10 +15,9 @@ public class MySqlUserDAO implements UserDAO{
         configureDatabase();
     }
 
-    public UserData createUser(UserData userData) throws DataAccessException {
+    public UserData createUser(UserData userData) {
         String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
         var statement = "INSERT INTO userData (username, password, email) VALUES (?, ?, ?)";
-        var json = new Gson().toJson(userData);
         executeUpdate(statement, userData.username(), hashedPassword, userData.email());
         return new UserData(userData.username(), hashedPassword, userData.email());
     }
@@ -34,8 +31,7 @@ public class MySqlUserDAO implements UserDAO{
                     if (rs.next()) {
                         String password = rs.getString("password");
                         String email = rs.getString("email");
-                        UserData userData = new UserData(username, password, email);
-                        return userData;
+                        return new UserData(username, password, email);
                     }
                 }
             }

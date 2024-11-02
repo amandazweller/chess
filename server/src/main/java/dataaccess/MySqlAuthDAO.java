@@ -1,13 +1,10 @@
 package dataaccess;
 
 import model.AuthData;
-import model.GameData;
 import model.UserData;
-import com.google.gson.Gson;
 import exceptions.ResponseException;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -19,7 +16,7 @@ public class MySqlAuthDAO implements AuthDAO{
         configureDatabase();
     }
 
-    public AuthData addAuth(String username) throws DataAccessException {
+    public AuthData addAuth(String username){
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData (username, authToken);
         var statement = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
@@ -99,9 +96,9 @@ public class MySqlAuthDAO implements AuthDAO{
     private void configureDatabase() throws ResponseException, DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
+            for (var state : createStatements) {
+                try (var preppedStatement = conn.prepareStatement(state)) {
+                    preppedStatement.executeUpdate();
                 }
             }
         } catch (SQLException ex) {
