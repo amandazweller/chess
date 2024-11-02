@@ -94,6 +94,7 @@ public class DataAccessTests {
     @Test
     @DisplayName("AddGame Success")
     public void addGame() throws DataAccessException {
+        gameDAO.clearGames();
         GameData gameData = new GameData(1, null, null, "gameName", new ChessGame());
         GameData createdGame = gameDAO.addGame(gameData);
         Assertions.assertNotNull(createdGame);
@@ -150,9 +151,43 @@ public class DataAccessTests {
     @Test
     @DisplayName("CreateUser Success")
     public void createUser() throws DataAccessException {
+        userDAO.clearUsers();
         UserData createdUser = userDAO.createUser(userData);
         Assertions.assertNotNull(createdUser);
         Assertions.assertEquals(username, createdUser.username());
+    }
+
+    @Test
+    @DisplayName("CreateUser Failure")
+    public void createUserSameUsername() throws DataAccessException {
+        userDAO.clearUsers();
+        userDAO.createUser(userData);
+        Assertions.assertThrows(ResponseException.class, () -> userDAO.createUser(userData));
+    }
+
+    @Test
+    @DisplayName("GetUser Success")
+    public void getUser() throws DataAccessException {
+        userDAO.clearUsers();
+        userDAO.createUser(userData);
+        UserData sameUser = userDAO.getUser(username);
+        Assertions.assertNotNull(sameUser);
+        Assertions.assertEquals(username, sameUser.username());
+    }
+
+    @Test
+    @DisplayName("GetUser Failure")
+    public void getUserWrongUsername() throws DataAccessException {
+        UserData retrievedUser = userDAO.getUser("nonExistentUsername");
+        Assertions.assertNull(retrievedUser);
+    }
+
+    @Test
+    @DisplayName("ClearUsers Success")
+    public void clearUsers() throws DataAccessException {
+        userDAO.clearUsers();
+        UserData retrievedUser = userDAO.getUser(username);
+        Assertions.assertNull(retrievedUser);
     }
 
 }
