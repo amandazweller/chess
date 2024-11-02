@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataaccess.*;
 import dataaccess.DataAccessException;
 import exceptions.ResponseException;
@@ -36,36 +37,30 @@ public class DataAccessTests {
 
     @Test
     @DisplayName("AddAuth Success")
-    public void addAuth_Success() throws DataAccessException {
+    public void addAuth() throws DataAccessException {
         AuthData authData = authDAO.addAuth(username);
         Assertions.assertNotNull(authData);
         Assertions.assertEquals(authDAO.getAuth(authData.authToken()).authToken(), authData.authToken());
     }
 
     @Test
-    @DisplayName("AddAuth Failure - Null Username")
-    public void addAuth_Failure_NullUsername() {
-        // Expecting an exception to be thrown when trying to add a null username
+    @DisplayName("AddAuth Failure")
+    public void addAuthNullUsername() {
         ResponseException exception = Assertions.assertThrows(
                 ResponseException.class,
-                () -> authDAO.addAuth(null), // Providing a null username
-                "Expected ResponseException for null username insertion, but it was not thrown."
-        );
-
-        // Check if the exception message matches the expected message
-        Assertions.assertTrue(
-                exception.getMessage().contains("unable to update database"),
-                "The exception message should indicate a database update issue due to null username."
+                () -> authDAO.addAuth(null)
         );
         Assertions.assertTrue(
-                exception.getMessage().contains("Column 'username' cannot be null"),
-                "The exception message should indicate that the 'username' column cannot be null."
+                exception.getMessage().contains("unable to update database")
+        );
+        Assertions.assertTrue(
+                exception.getMessage().contains("Column 'username' cannot be null")
         );
     }
 
     @Test
     @DisplayName("GetAuth Success")
-    public void getAuth_Success() throws DataAccessException {
+    public void getAuth() throws DataAccessException {
         AuthData newAuthData = authDAO.addAuth(username);
         AuthData authData = authDAO.getAuth(newAuthData.authToken());
         Assertions.assertNotNull(authData);
@@ -73,10 +68,91 @@ public class DataAccessTests {
     }
 
     @Test
-    @DisplayName("GetAuth Failure - Non-existent Token")
-    public void getAuth_Failure_NonExistentToken() throws DataAccessException {
+    @DisplayName("GetAuth Failure")
+    public void getAuthWrongToken() throws DataAccessException {
         AuthData authData = authDAO.getAuth("nonExistentToken");
-        Assertions.assertNull(authData);  // Expecting null if token does not exist
+        Assertions.assertNull(authData);
+    }
+
+    @Test
+    @DisplayName("DeleteAuth Success")
+    public void deleteAuth() throws DataAccessException {
+        AuthData authData = authDAO.addAuth(username);
+        authDAO.deleteAuth(authData.authToken());
+        Assertions.assertNull(authDAO.getAuth(authData.authToken()));
+
+    }
+
+    @Test
+    @DisplayName("ClearAuth Success")
+    public void clearAuth() throws DataAccessException {
+        AuthData authData = authDAO.addAuth(username);
+        authDAO.clearAuth();
+        Assertions.assertNull(authDAO.getAuth(authData.authToken()));
+    }
+
+    @Test
+    @DisplayName("AddGame Success")
+    public void addGame() throws DataAccessException {
+        GameData gameData = new GameData(1, null, null, "gameName", new ChessGame());
+        GameData createdGame = gameDAO.addGame(gameData);
+        Assertions.assertNotNull(createdGame);
+        Assertions.assertEquals(createdGame, gameData);
+    }
+
+    @Test
+    @DisplayName("AddGame Failure")
+    public void addGameNullGameName() {
+        GameData gameData = new GameData(1, null, null, null, new ChessGame());
+        ResponseException exception = Assertions.assertThrows(
+                ResponseException.class,
+                () -> gameDAO.addGame(gameData));
+        Assertions.assertTrue(
+                exception.getMessage().contains("unable to update database"));
+    }
+
+    @Test
+    @DisplayName("GetGame Success")
+    public void getGame() throws DataAccessException {
+        gameDAO.clearGames();
+        GameData gameData = new GameData(1, null, null, "gameName", new ChessGame());
+        gameDAO.addGame(gameData);
+        GameData retrievedGame = gameDAO.getGame(1);
+        Assertions.assertNotNull(retrievedGame);
+        Assertions.assertEquals(gameData.gameName(), retrievedGame.gameName());
+        Assertions.assertEquals(gameData.gameID(), retrievedGame.gameID());
+        Assertions.assertEquals(gameData.whiteUsername(), retrievedGame.whiteUsername());
+        Assertions.assertEquals(gameData.blackUsername(), retrievedGame.blackUsername());
+    }
+
+    @Test
+    @DisplayName("GetGame Failure")
+    public void getGameWrongID() throws DataAccessException {
+        GameData gameData = gameDAO.getGame(-1);  // Non-existent ID
+        Assertions.assertNull(gameData);
+    }
+
+    @Test
+    @DisplayName("ListGames Success")
+    public void listGames() throws DataAccessException {
+        ArrayList<GameData> games = gameDAO.listGames();
+        Assertions.assertNotNull(games);
+    }
+
+    @Test
+    @DisplayName("ClearGames Success")
+    public void clearGames() throws DataAccessException {
+        gameDAO.clearGames();
+        ArrayList<GameData> games = gameDAO.listGames();
+        Assertions.assertTrue(games.isEmpty());
+    }
+
+    @Test
+    @DisplayName("CreateUser Success")
+    public void createUser() throws DataAccessException {
+        UserData createdUser = userDAO.createUser(userData);
+        Assertions.assertNotNull(createdUser);
+        Assertions.assertEquals(username, createdUser.username());
     }
 
 }
