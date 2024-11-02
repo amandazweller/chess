@@ -76,7 +76,8 @@ public class MySqlGameDAO implements GameDAO{
 
     public GameData addGame(GameData gameData) throws DataAccessException {
         var statement = "INSERT INTO gameData (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-        mySqlDAO.executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        mySqlDAO.executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(),
+                gameData.blackUsername(), gameData.gameName(), gameData.game());
         return gameData;
     }
 
