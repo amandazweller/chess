@@ -9,6 +9,6 @@ public interface GameDAO {
     ArrayList<GameData> listGames() throws DataAccessException;
     GameData addGame(GameData gameData) throws DataAccessException;
     public void clearGames() throws DataAccessException;
-    public void setWhiteUsername(Integer gameID, String whiteUsername);
-    public void setBlackUsername(Integer gameID, String blackUsername);
+    public void setWhiteUsername(Integer gameID, String whiteUsername) throws DataAccessException;
+    public void setBlackUsername(Integer gameID, String blackUsername) throws DataAccessException;
 }
