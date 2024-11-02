@@ -190,4 +190,34 @@ public class DataAccessTests {
         Assertions.assertNull(retrievedUser);
     }
 
+    @Test
+    @DisplayName("SetWhiteUsername Success")
+    public void setWhiteUsername() throws DataAccessException {
+        gameDAO.clearGames();
+        GameData gameData = new GameData(1, null, null, "gameName", new ChessGame());
+        gameDAO.addGame(gameData);
+
+        String newWhiteUsername = "newWhitePlayer";
+        gameDAO.setWhiteUsername(1, newWhiteUsername);
+
+        GameData updatedGame = gameDAO.getGame(1);
+        Assertions.assertNotNull(updatedGame);
+        Assertions.assertEquals(newWhiteUsername, updatedGame.whiteUsername());
+    }
+
+    @Test
+    @DisplayName("SetBlackUsername Success")
+    public void setBlackUsername() throws DataAccessException {
+        gameDAO.clearGames();
+        GameData gameData = new GameData(1, null, null, "gameName", new ChessGame());
+        gameDAO.addGame(gameData);
+
+        String newBlackUsername = "newBlackPlayer";
+        gameDAO.setBlackUsername(1, newBlackUsername);
+
+        GameData updatedGame = gameDAO.getGame(1);
+        Assertions.assertNotNull(updatedGame);
+        Assertions.assertEquals(newBlackUsername, updatedGame.blackUsername());
+    }
+
 }
