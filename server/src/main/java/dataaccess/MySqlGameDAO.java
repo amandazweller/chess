@@ -24,20 +24,8 @@ public class MySqlGameDAO implements GameDAO{
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String whiteUsername;
-                        String blackUsername;
-                        if (rs.getString("whiteUsername") == null){
-                            whiteUsername = null;
-                        }
-                        else {
-                            whiteUsername = rs.getString("whiteUsername;");
-                        }
-                        if (rs.getString("blackUsername") == null){
-                            blackUsername = null;
-                        }
-                        else {
-                            blackUsername = rs.getString("blackUsername;");
-                        }
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
                         String gameName = rs.getString("gameName");
                         ChessGame game = new Gson().fromJson(rs.getString("game"), ChessGame.class);
                         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);

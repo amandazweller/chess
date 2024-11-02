@@ -249,8 +249,11 @@ public class StandardAPITests {
         //register second user
         TestAuthResult registerResult = serverFacade.register(newUser);
 
-        //join request trying to also join  as black
+        TestListResult listResult = serverFacade.listGames(existingAuth);
+
+        //join request trying to also join as black
         TestResult joinResult = serverFacade.joinPlayer(joinRequest, registerResult.getAuthToken());
+
 
         //check failed
         assertHttpForbidden(joinResult);
