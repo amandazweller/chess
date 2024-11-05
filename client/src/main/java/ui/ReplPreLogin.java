@@ -2,6 +2,7 @@ package ui;
 
 import java.util.Scanner;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.Constants.RESET;
 import static java.awt.Color.*;
 
 
@@ -32,11 +33,6 @@ public class ReplPreLogin {
             }
         }
         System.out.println();
-    }
-
-    public void notify(Notification notification) {
-        System.out.println(RED + notification.message());
-        printPrompt();
     }
 
     private void printPrompt() {

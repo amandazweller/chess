@@ -25,17 +25,17 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, UserData.class);
     }
 
-    private UserData loginUser(UserData userData) throws ResponseException{
+    public UserData loginUser(UserData userData) throws ResponseException{
         var path = "/session";
         return this.makeRequest("POST", path, userData, UserData.class);
     }
 
-    private void logoutUser(UserData userData) throws ResponseException {
+    public void logoutUser() throws ResponseException {
         var path = "/session";
         this.makeRequest("DELETE", path, null, null);
     }
 
-    private ArrayList<GameData> listGames() throws ResponseException {
+    public ArrayList<GameData> listGames() throws ResponseException {
         var path = "/game";
         record listPetResponse(ArrayList<GameData> games) {
         }
@@ -43,17 +43,17 @@ public class ServerFacade {
         return response.games();
     }
 
-    private GameData createGame(GameData gameData) throws ResponseException  {
+    public GameData createGame(GameData gameData) throws ResponseException  {
         var path = "/game";
         return this.makeRequest("POST", path, gameData, GameData.class);
     }
 
-    private GameData joinGame(int gameID) throws ResponseException {
+    public GameData joinGame(int gameID) throws ResponseException {
         var path = "/game";
         return this.makeRequest("POST", path, gameID, GameData.class);
     }
 
-    private void clearAll() throws ResponseException {
+    public void clearAll() throws ResponseException {
         var path = "/db";
         this.makeRequest("DELETE", path, null, null);
     }
