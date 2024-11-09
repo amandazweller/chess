@@ -48,9 +48,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, gameName, GameData.class);
     }
 
-    public GameData joinGame(int gameID) throws ResponseException {
+    public GameData joinGame(GameData gameData) throws ResponseException {
         var path = "/game";
-        return this.makeRequest("POST", path, gameID, GameData.class);
+        return this.makeRequest("POST", path, gameData, GameData.class);
     }
 
     public void clearAll() throws ResponseException {
@@ -108,4 +108,7 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
+    public void observeGame(GameData gameData) {
+
+    }
 }

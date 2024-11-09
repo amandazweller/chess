@@ -48,7 +48,7 @@ public class PostLoginClient {
             state = State.LOGGEDIN;
             gameName = params[0];
             server.createGame(gameName);
-            return String.format("You created game named %s.", gameName);
+            return String.format("You created game named: %s.", gameName);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -57,20 +57,29 @@ public class PostLoginClient {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
-            server.joinGame(id);
-            return String.format("You joined game %s.", id);
+            GameData gameData = getGame(id);
+            server.joinGame(gameData);
+            return String.format("You joined game with id: %s.", id);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+    }
+
+    private GameData getGame(int id) throws ResponseException {
+        for (var game : server.listGames()) {
+            if (game.gameID() == id) {
+                return game;
+            }
+        }
+        return null;
     }
 
     public String observeGame(String... params) throws ResponseException {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
-            username = String.join("-", params);
-            password = String.join("-", params);
-            UserData userData = new UserData(username, password, email);
-            server.loginUser(userData);
-            return String.format("You logged in as %s.", username);
+            int id = Integer.parseInt(params[0]);
+            GameData gameData = getGame(id);
+            server.observeGame(gameData);
+            return String.format("You are observing game with id: %s.", id);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -79,7 +88,7 @@ public class PostLoginClient {
         assertSignedIn();
         server.logoutUser();
         state = State.LOGGEDOUT;
-        return String.format("%s left the shop", username);
+        return String.format("%s has logged out", username);
     }
 
     public String listGames() throws ResponseException {
