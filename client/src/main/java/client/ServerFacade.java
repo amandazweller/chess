@@ -77,7 +77,7 @@ public class ServerFacade {
         var body = Map.of("gameID", gameID, "playerColor", playerColor);
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
-        var response = this.makeRequest("POST", path, jsonBody);
+        var response = this.makeRequest("PUT", path, jsonBody);
         return !response.contains("Error");
     }
 
