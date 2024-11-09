@@ -69,49 +69,49 @@ public class Server {
         return Spark.port();
     }
 
-    private void exceptionResponse(ResponseException except, Request request, Response response){
+    public void exceptionResponse(ResponseException except, Request request, Response response){
         response.status(except.getStatusCode());
         response.body(new Gson().toJson(Map.of("message", except.getMessage())));
         response.type("appilcation/json");
     }
-    private void exceptionDataAccess(DataAccessException ex, Request req, Response res) {
+    public void exceptionDataAccess(DataAccessException ex, Request req, Response res) {
         res.status(500);
         res.body(new Gson().toJson(Map.of("message", ex.getMessage())));
         res.type("application/json");
     }
 
-    private Object registerUser(Request request, Response response) throws ResponseException, DataAccessException{
+    public Object registerUser(Request request, Response response) throws ResponseException, DataAccessException{
         var user = new Gson().fromJson(request.body(), UserData.class);
         Object registerResponse = registerService.addUser(user);
         return new Gson().toJson(registerResponse);
     }
 
-    private Object loginUser(Request request, Response response) throws ResponseException, DataAccessException{
+    public Object loginUser(Request request, Response response) throws ResponseException, DataAccessException{
         var user = new Gson().fromJson(request.body(), UserData.class);
         Object loginResponse = loginService.getUser(user);
         return new Gson().toJson(loginResponse);
     }
 
-    private Object logoutUser(Request request, Response response) throws ResponseException, DataAccessException{
+    public Object logoutUser(Request request, Response response) throws ResponseException, DataAccessException{
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
         Object logoutResponse = logoutService.logoutUser(authToken);
         return new Gson().toJson(logoutResponse);
     }
 
-    private Object listGames(Request request, Response response) throws ResponseException, DataAccessException{
+    public Object listGames(Request request, Response response) throws ResponseException, DataAccessException{
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
         ListGameResponse listGameResponse = listGamesService.listAllGames(authToken);
         return new Gson().toJson(listGameResponse);
     }
 
-    private Object createGame(Request request, Response response) throws ResponseException, DataAccessException {
+    public Object createGame(Request request, Response response) throws ResponseException, DataAccessException {
         var game = new Gson().fromJson(request.body(), GameData.class);
         String authToken = new Gson().fromJson(request.headers("Authorization"), String.class);
         GameData createGameResponse = createGameService.createGame(game.gameName(), authToken);
         return new Gson().toJson(createGameResponse);
     }
 
-    private Object joinGame(Request request, Response response) throws ResponseException, DataAccessException {
+    public Object joinGame(Request request, Response response) throws ResponseException, DataAccessException {
         var game = new Gson().fromJson(request.body(), GameData.class);
         JsonObject body = new Gson().fromJson(request.body(), JsonObject.class);
         if (!body.has("playerColor") || body.get("playerColor").isJsonNull()) {
@@ -123,7 +123,7 @@ public class Server {
         return new Gson().toJson(joinGameResponse);
     }
 
-    private Object clearAll(Request request, Response response) throws ResponseException, DataAccessException {
+    public Object clearAll() throws ResponseException, DataAccessException {
         Object clearResponse = clearService.clear();
         return new Gson().toJson(clearResponse);
     }

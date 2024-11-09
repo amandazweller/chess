@@ -1,17 +1,14 @@
 package client;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.sun.net.httpserver.Request;
 import exception.ResponseException;
 import model.GameData;
-import model.AuthData;
-import model.ListGameResponse;
 import model.UserData;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ServerFacade {
     private String serverUrl = "http://localhost:8181";
@@ -20,45 +17,65 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public UserData registerUser(UserData userData) throws ResponseException {
+    public boolean registerUser(UserData userData) throws ResponseException {
+        var body = Map.of("username", userData.username(), "password", userData.password(), "email", userData.email());
+        var jsonBody = new Gson().toJson(body);
         var path = "/user";
-        return this.makeRequest("POST", path, userData, UserData.class);
+        var response = this.makeRequest("POST", path, jsonBody);
+        if (response.contains("Error")){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
-    public UserData loginUser(UserData userData) throws ResponseException{
+    public boolean loginUser(UserData userData) throws ResponseException{
+        var body = Map.of("username", userData.username(), "password", userData.password(), "email", userData.email());
+        var jsonBody = new Gson().toJson(body);
         var path = "/session";
-        return this.makeRequest("POST", path, userData, UserData.class);
+        var response = this.makeRequest("POST", path, jsonBody);
+        if (response.contains("Error")){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     public void logoutUser() throws ResponseException {
         var path = "/session";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null);
     }
 
     public ArrayList<GameData> listGames() throws ResponseException {
         var path = "/game";
-        record listPetResponse(ArrayList<GameData> games) {
-        }
-        var response = this.makeRequest("GET", path, null, listPetResponse.class);
-        return response.games();
+        var response = this.makeRequest("GET", path, null);
+        GameData game = new Gson().fromJson(response, GameData.class);
+        ArrayList<GameData> games = new ArrayList<>();
+        games.add(game);
+        return games;
     }
 
     public GameData createGame(String gameName) throws ResponseException  {
+        var body = Map.of("gameName", gameName);
+        var jsonBody = new Gson().toJson(body);
         var path = "/game";
-        return this.makeRequest("POST", path, gameName, GameData.class);
+        var response = this.makeRequest("POST", path, jsonBody);
+        if (response.contains("Error"))
     }
 
     public GameData joinGame(GameData gameData) throws ResponseException {
         var path = "/game";
-        return this.makeRequest("POST", path, gameData, GameData.class);
+        return this.makeRequest("POST", path, gameData);
     }
 
     public void clearAll() throws ResponseException {
         var path = "/db";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private String makeRequest(String method, String path, String request) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -68,7 +85,7 @@ public class ServerFacade {
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
-            return readBody(http, responseClass);
+            return readBody(http);
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
         }
@@ -91,14 +108,11 @@ public class ServerFacade {
         }
     }
 
-    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+    private static <T> T readBody(HttpURLConnection http) throws IOException {
         T response = null;
         if (http.getContentLength() < 0) {
             try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
-                }
             }
         }
         return response;
