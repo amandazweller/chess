@@ -43,8 +43,8 @@ public class PreLoginClient {
     public String loginUser(String... params) throws ResponseException {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
-            username = String.join("-", params);
-            password = String.join("-", params);
+            username = params[0];
+            password = params[1];
             UserData userData = new UserData(username, password, email);
             server.loginUser(userData);
             return String.format("You logged in as %s.", username);
@@ -55,9 +55,9 @@ public class PreLoginClient {
     public String registerUser(String... params) throws ResponseException {
         if (params.length >= 3) {
             state = State.LOGGEDIN;
-            username = String.join("-", params);
-            password = String.join("-", params);
-            email = String.join("-", params);
+            username = params[0];
+            password = params[1];
+            email = params[2];
             UserData userData = new UserData(username, password, email);
             server.registerUser(userData);
             return String.format("You registered as %s.", username);
