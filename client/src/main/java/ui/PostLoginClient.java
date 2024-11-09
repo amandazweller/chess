@@ -18,7 +18,7 @@ public class PostLoginClient {
     private State state = State.LOGGEDOUT;
 
 
-    public PostLoginClient(String serverUrl, ReplPreLogin replPreLogin) {
+    public PostLoginClient(String serverUrl, ReplPostLogin replPostLogin) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
