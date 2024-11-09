@@ -98,7 +98,7 @@ public class ServerFacadeTests {
 
     @Test
     public void listGamesNegative() throws ResponseException {
-        assertEquals(facade.listGames(), HashSet.newHashSet(8));
+        assertTrue(facade.listGames().isEmpty());
     }
 
 //    @Test
