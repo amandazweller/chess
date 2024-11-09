@@ -50,18 +50,19 @@ public class PostLoginClient {
             server.createGame(gameName);
             return String.format("You created game named: %s.", gameName);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <NAME>");
     }
 
     public String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
+            String playerColor = params[1];
             GameData gameData = getGame(id);
             server.joinGame(gameData);
             return String.format("You joined game with id: %s.", id);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <ID> <WHITE|BLACK>");
     }
 
     private GameData getGame(int id) throws ResponseException {
@@ -81,7 +82,7 @@ public class PostLoginClient {
             server.observeGame(gameData);
             return String.format("You are observing game with id: %s.", id);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <ID>");
     }
 
     public String logoutUser() throws ResponseException {
