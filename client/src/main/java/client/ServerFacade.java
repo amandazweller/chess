@@ -22,12 +22,7 @@ public class ServerFacade {
         var jsonBody = new Gson().toJson(body);
         var path = "/user";
         var response = this.makeRequest("POST", path, jsonBody);
-        if (response.contains("Error")){
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !response.contains("Error");
     }
 
     public boolean loginUser(UserData userData) throws ResponseException{
@@ -35,12 +30,7 @@ public class ServerFacade {
         var jsonBody = new Gson().toJson(body);
         var path = "/session";
         var response = this.makeRequest("POST", path, jsonBody);
-        if (response.contains("Error")){
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !response.contains("Error");
     }
 
     public void logoutUser() throws ResponseException {
@@ -57,17 +47,20 @@ public class ServerFacade {
         return games;
     }
 
-    public GameData createGame(String gameName) throws ResponseException  {
+    public boolean createGame(String gameName) throws ResponseException  {
         var body = Map.of("gameName", gameName);
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
         var response = this.makeRequest("POST", path, jsonBody);
-        if (response.contains("Error"))
+        return !response.contains("Error");
     }
 
-    public GameData joinGame(GameData gameData) throws ResponseException {
+    public boolean joinGame(int gameID, String playerColor) throws ResponseException {
+        var body = Map.of("gameID", gameID, "playerColor", playerColor);
+        var jsonBody = new Gson().toJson(body);
         var path = "/game";
-        return this.makeRequest("POST", path, gameData);
+        var response = this.makeRequest("POST", path, jsonBody);
+        return !response.contains("Error");
     }
 
     public void clearAll() throws ResponseException {

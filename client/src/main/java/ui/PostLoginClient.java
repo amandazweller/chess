@@ -2,7 +2,6 @@ package ui;
 
 import java.util.Arrays;
 
-import com.google.gson.Gson;
 import model.GameData;
 import exception.ResponseException;
 import client.ServerFacade;
@@ -41,7 +40,7 @@ public class PostLoginClient {
     }
 
     public String createGame(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length >= 1) {
             state = State.LOGGEDIN;
             gameName = params[0];
             server.createGame(gameName);
@@ -55,8 +54,7 @@ public class PostLoginClient {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
             String playerColor = params[1];
-            GameData gameData = getGame(id);
-            server.joinGame(gameData);
+            server.joinGame(id, playerColor);
             return String.format("You joined game with id: %s.", id);
         }
         throw new ResponseException(400, "Expected: <ID> <WHITE|BLACK>");
@@ -72,7 +70,7 @@ public class PostLoginClient {
     }
 
     public String observeGame(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length >= 1) {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
             GameData gameData = getGame(id);
@@ -92,12 +90,13 @@ public class PostLoginClient {
     public String listGames() throws ResponseException {
         assertSignedIn();
         var games = server.listGames();
-        var result = new StringBuilder();
-        var gson = new Gson();
-        for (var game : games) {
-            result.append(gson.toJson(game)).append('\n');
+        for (int i = 0; i < games.size(); i++) {
+            GameData game = games.get(i);
+            String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "no player found";
+            String blackUser = game.blackUsername() != null ? game.blackUsername() : "no player found";
+            return String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s %n", i, game.gameName(), whiteUser, blackUser);
         }
-        return result.toString();
+        return null;
     }
 
     private void assertSignedIn() throws ResponseException {
