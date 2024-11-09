@@ -123,9 +123,14 @@ public class Server {
         return new Gson().toJson(joinGameResponse);
     }
 
-    public Object clearAll() throws ResponseException, DataAccessException {
-        Object clearResponse = clearService.clear();
-        return new Gson().toJson(clearResponse);
+    public void clear() throws DataAccessException {
+        clearService.clear();
+    }
+
+    public Object clearAll(Request request, Response response) throws ResponseException, DataAccessException {
+        clear();
+        response.status(200);
+        return "{}";
     }
 
     public void stop() {

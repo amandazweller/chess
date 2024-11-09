@@ -9,38 +9,57 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class ServerFacade {
     private String serverUrl = "http://localhost:8181";
+    String authToken;
 
     public ServerFacade(String url){
         serverUrl = url;
     }
 
-    public boolean registerUser(UserData userData) throws ResponseException {
-        var body = Map.of("username", userData.username(), "password", userData.password(), "email", userData.email());
+    public boolean registerUser(String username, String password, String email) throws ResponseException {
+        var body = Map.of("username", username, "password", password, "email", email);
         var jsonBody = new Gson().toJson(body);
         var path = "/user";
         var response = this.makeRequest("POST", path, jsonBody);
+        if (response.contains("Error")){
+            return false;
+        }
+        Map responseMap = new Gson().fromJson(response, Map.class);
+        authToken = (String) responseMap.get("authToken");
         return !response.contains("Error");
     }
 
-    public boolean loginUser(UserData userData) throws ResponseException{
-        var body = Map.of("username", userData.username(), "password", userData.password(), "email", userData.email());
+    public boolean loginUser(String username, String password) throws ResponseException{
+        var body = Map.of("username", username, "password", password);
         var jsonBody = new Gson().toJson(body);
         var path = "/session";
         var response = this.makeRequest("POST", path, jsonBody);
+        if (response.contains("Error")){
+            return false;
+        }
+        Map responseMap = new Gson().fromJson(response, Map.class);
+        authToken = (String) responseMap.get("authToken");
         return !response.contains("Error");
     }
 
-    public void logoutUser() throws ResponseException {
+    public boolean logoutUser() throws ResponseException {
         var path = "/session";
-        this.makeRequest("DELETE", path, null);
-    }
+        var response = this.makeRequest("DELETE", path, null);
+        if (response.contains("Error")){
+            return false;
+        }
+        authToken = null;
+        return !response.contains("Error");    }
 
     public ArrayList<GameData> listGames() throws ResponseException {
         var path = "/game";
         var response = this.makeRequest("GET", path, null);
+        if (response.contains("Error")) {
+            return new ArrayList<>();
+        }
         GameData game = new Gson().fromJson(response, GameData.class);
         ArrayList<GameData> games = new ArrayList<>();
         games.add(game);
@@ -69,29 +88,47 @@ public class ServerFacade {
     }
 
     private String makeRequest(String method, String path, String request) throws ResponseException {
+        String response;
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
+            if (authToken != null) {
+                http.addRequestProperty("authorization", authToken);
+            }
+
+            if (request != null) {
+                http.setDoOutput(true);
+                http.setRequestProperty("Content-Type", "application/json");
+                try (OutputStream os = http.getOutputStream()) {
+                    os.write(request.getBytes());
+                    os.flush();
+                }
+            }
+
             http.connect();
-            throwIfNotSuccessful(http);
+            int responseCode = http.getResponseCode();
+            if (!isSuccessful(responseCode)) {
+                return "Error: 401";
+            }
             return readBody(http);
-        } catch (Exception ex) {
-            throw new ResponseException(500, ex.getMessage());
+
+        } catch (IOException e) {
+            throw new ResponseException(500, "Connection error: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private static String writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
+            return reqData;
         }
+        return "";
     }
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
@@ -101,15 +138,18 @@ public class ServerFacade {
         }
     }
 
-    private static <T> T readBody(HttpURLConnection http) throws IOException {
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader reader = new InputStreamReader(respBody);
+        private String readBody(HttpURLConnection http) throws IOException {
+            try (InputStream inputStream = http.getInputStream();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                return response.toString();
             }
         }
-        return response;
-    }
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;

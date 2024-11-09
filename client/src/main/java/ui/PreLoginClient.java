@@ -10,7 +10,6 @@ import client.ServerFacade;
 public class PreLoginClient {
     private String username = null;
     private String password = null;
-    private String email = null;
     private final ServerFacade server;
     private State state = State.LOGGEDOUT;
 
@@ -41,9 +40,10 @@ public class PreLoginClient {
             state = State.LOGGEDIN;
             username = params[0];
             password = params[1];
-            UserData userData = new UserData(username, password, email);
-            server.loginUser(userData);
-            return String.format("You logged in as %s.", username);
+            boolean result = server.loginUser(username, password);
+            if (result){
+                return String.format("You logged in as %s.", username);
+            }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -53,10 +53,11 @@ public class PreLoginClient {
             state = State.LOGGEDIN;
             username = params[0];
             password = params[1];
-            email = params[2];
-            UserData userData = new UserData(username, password, email);
-            server.registerUser(userData);
-            return String.format("You registered as %s.", username);
+            String email = params[2];
+            boolean result = server.registerUser(username, password, email);
+            if (result){
+                return String.format("You registered as %s.", username);
+            }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }

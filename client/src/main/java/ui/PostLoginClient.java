@@ -43,8 +43,10 @@ public class PostLoginClient {
         if (params.length >= 1) {
             state = State.LOGGEDIN;
             gameName = params[0];
-            server.createGame(gameName);
-            return String.format("You created game named: %s.", gameName);
+            boolean result = server.createGame(gameName);
+            if (result){
+                return String.format("Game %s created successfully.", gameName);
+            }
         }
         throw new ResponseException(400, "Expected: <NAME>");
     }
@@ -54,8 +56,10 @@ public class PostLoginClient {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
             String playerColor = params[1];
-            server.joinGame(id, playerColor);
-            return String.format("You joined game with id: %s.", id);
+            boolean result = server.joinGame(id, playerColor);
+            if (result){
+                return String.format("Game %s joined successfully.", id);
+            }
         }
         throw new ResponseException(400, "Expected: <ID> <WHITE|BLACK>");
     }
@@ -75,7 +79,7 @@ public class PostLoginClient {
             int id = Integer.parseInt(params[0]);
             GameData gameData = getGame(id);
             server.observeGame(gameData);
-            return String.format("You are observing game with id: %s.", id);
+            return String.format("Successfully observing game with id: %s.", id);
         }
         throw new ResponseException(400, "Expected: <ID>");
     }
