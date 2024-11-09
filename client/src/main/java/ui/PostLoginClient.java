@@ -13,6 +13,7 @@ public class PostLoginClient {
     private String username = null;
     private String password = null;
     private String email = null;
+    private String gameName = null;
     private final ServerFacade server;
     private final String serverUrl;
     private State state = State.LOGGEDOUT;
@@ -45,11 +46,9 @@ public class PostLoginClient {
     public String createGame(String... params) throws ResponseException {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
-            username = String.join("-", params);
-            password = String.join("-", params);
-            UserData userData = new UserData(username, password, email);
-            server.loginUser(userData);
-            return String.format("You logged in as %s.", username);
+            gameName = params[0];
+            server.createGame(gameName);
+            return String.format("You created game named %s.", gameName);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
@@ -57,11 +56,9 @@ public class PostLoginClient {
     public String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
-            username = String.join("-", params);
-            password = String.join("-", params);
-            UserData userData = new UserData(username, password, email);
-            server.loginUser(userData);
-            return String.format("You logged in as %s.", username);
+            int id = Integer.parseInt(params[0]);
+            server.joinGame(id);
+            return String.format("You joined game %s.", id);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
