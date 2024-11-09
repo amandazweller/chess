@@ -19,23 +19,23 @@ public class ReplPreLogin {
 
     public void run() {
         System.out.println("\uD83D\uDC36 Welcome to 240 chess. Type Help to get started.");
-        while (state.equals(State.LOGGEDOUT)){
-            Scanner scanner = new Scanner(System.in);
-            var result = "";
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals("quit") && state.equals(State.LOGGEDOUT)) {
+            printPrompt();
+            String line = scanner.nextLine();
 
-            while (!result.equals("quit")) {
-                printPrompt();
-                String line = scanner.nextLine();
-
-                try {
-                    result = client.eval(line);
-                    System.out.print(GREEN + result);
-                } catch (Throwable e) {
-                    var msg = e.toString();
-                    System.out.print(msg);
-                }
+            try {
+                result = client.eval(line);
+                System.out.print(GREEN + result);
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
             }
             System.out.println();
+        }
+        if (result.equals("quit")){
+            return;
         }
         replPostLogin.run();
     }
