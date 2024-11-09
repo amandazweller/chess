@@ -42,7 +42,10 @@ public class PreLoginClient {
             password = params[1];
             boolean result = server.loginUser(username, password);
             if (result){
-                return String.format("You logged in as %s.", username);
+                return String.format("You are now logged in as %s.", username);
+            }
+            else {
+                return "Username or password already taken. Please try again.";
             }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
@@ -57,6 +60,9 @@ public class PreLoginClient {
             boolean result = server.registerUser(username, password, email);
             if (result){
                 return String.format("You registered as %s.", username);
+            }
+            else {
+                return "Username already taken";
             }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");

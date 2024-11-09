@@ -4,13 +4,11 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
 import model.ListGameResponse;
-import model.UserData;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 
 public class ServerFacade {
     private String serverUrl = "http://localhost:8181";
@@ -154,7 +152,7 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    public void observeGame(GameData gameData) {
-
+    public boolean observeGame(int gameID) {
+        return true;
     }
 }

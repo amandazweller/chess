@@ -60,6 +60,9 @@ public class PostLoginClient {
             if (result){
                 return String.format("Game %s joined successfully.", id);
             }
+            else {
+                return "Game does not exist or color already taken. Please try again.";
+            }
         }
         throw new ResponseException(400, "Expected: <ID> <WHITE|BLACK>");
     }
@@ -77,9 +80,13 @@ public class PostLoginClient {
         if (params.length >= 1) {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
-            GameData gameData = getGame(id);
-            server.observeGame(gameData);
-            return String.format("Successfully observing game with id: %s.", id);
+            boolean result = server.observeGame(id);
+            if (result){
+                return String.format("Successfully observing game with id: %s.", id);
+            }
+            else {
+                return "Game does not exist. Please try again.";
+            }
         }
         throw new ResponseException(400, "Expected: <ID>");
     }
