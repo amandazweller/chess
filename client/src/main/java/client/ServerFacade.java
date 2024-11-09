@@ -3,6 +3,7 @@ package client;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
+import model.ListGameResponse;
 import model.UserData;
 
 import java.io.*;
@@ -60,10 +61,8 @@ public class ServerFacade {
         if (response.contains("Error")) {
             return new ArrayList<>();
         }
-        GameData game = new Gson().fromJson(response, GameData.class);
-        ArrayList<GameData> games = new ArrayList<>();
-        games.add(game);
-        return games;
+        ListGameResponse games = new Gson().fromJson(response, ListGameResponse.class);
+        return games.games();
     }
 
     public boolean createGame(String gameName) throws ResponseException  {

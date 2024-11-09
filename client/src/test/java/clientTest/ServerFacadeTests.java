@@ -3,10 +3,12 @@ package clientTest;
 import client.ServerFacade;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,19 +103,23 @@ public class ServerFacadeTests {
         assertTrue(facade.listGames().isEmpty());
     }
 
-//    @Test
-//    public void joinGamePositive() throws ResponseException {
-//        facade.registerUser(userData);
-//        boolean result = facade.createGame("gameName");
-//        facade.getGame()
-//    }
-//
-//    @Test
-//    public void joinGameNegative() {
-//        facade.register("username", "password", "email");
-//        boolean result = facade.createGame("gameName");
-//    }
+    @Test
+    public void joinGamePositive() throws ResponseException {
+        facade.registerUser("username", "password", "email");
+        facade.createGame("gameName");
+        ArrayList<GameData> games = facade.listGames();
+        int gameID = games.get(0).gameID();
+        boolean result = facade.joinGame(gameID, "WHITE");
+        assertTrue(result);
+    }
 
-
-
+    @Test
+    public void joinGameNegative() throws ResponseException {
+        facade.registerUser("username", "password", "email");
+        facade.createGame("gameName");
+        ArrayList<GameData> games = facade.listGames();
+        int gameID = games.get(0).gameID();
+        boolean result = facade.joinGame(0, "WHITE");
+        assertFalse(result);
+    }
 }
