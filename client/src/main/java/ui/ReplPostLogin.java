@@ -18,7 +18,7 @@ public class ReplPostLogin {
 
     public void run(ServerFacade server) {
         client = new PostLoginClient(server, this);
-        System.out.println("You have successfully logged in. Type Help to get started.");
+        System.out.println("You have successfully logged in.");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

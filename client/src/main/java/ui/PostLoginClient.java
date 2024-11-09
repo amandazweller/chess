@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import model.GameData;
@@ -45,6 +46,9 @@ public class PostLoginClient {
             if (result){
                 return String.format("Game %s created successfully.", gameName);
             }
+            else {
+                return "did not work. try again";
+            }
         }
         throw new ResponseException(400, "Expected: <NAME>");
     }
@@ -53,8 +57,10 @@ public class PostLoginClient {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
+            ArrayList<GameData> games = serverFacade.listGames();
+            GameData gameData = games.get(id - 1);
             String playerColor = params[1];
-            boolean result = serverFacade.joinGame(id, playerColor);
+            boolean result = serverFacade.joinGame(gameData.gameID(), playerColor);
             if (result){
                 return String.format("Game %s joined successfully.", id);
             }
@@ -90,28 +96,25 @@ public class PostLoginClient {
     }
 
     public String logoutUser() throws ResponseException {
-        assertSignedIn();
         serverFacade.logoutUser();
         state = State.LOGGEDOUT;
         return String.format("%s has logged out", username);
     }
 
     public String listGames() throws ResponseException {
-        assertSignedIn();
-        var games = serverFacade.listGames();
-        for (int i = 0; i < games.size(); i++) {
-            GameData game = games.get(i);
+        ArrayList<GameData> games = serverFacade.listGames();
+        String result = "";
+        int i = 1;
+        for (GameData game : games) {
             String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "no player found";
             String blackUser = game.blackUsername() != null ? game.blackUsername() : "no player found";
-            return String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s %n", i, game.gameName(), whiteUser, blackUser);
+            result = result + String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s %n", i, game.gameName(), whiteUser, blackUser);
+            i++;
         }
-        return null;
-    }
-
-    private void assertSignedIn() throws ResponseException {
-        if (state == State.LOGGEDOUT) {
-            throw new ResponseException(400, "You must sign in");
+        if (games.isEmpty()){
+            return "No games found";
         }
+        return result;
     }
 
     public String help() {
