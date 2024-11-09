@@ -64,10 +64,10 @@ public class PreLoginClient {
 
     public String help() {
             return """
-                    - register <USERNAME> <PASSWORD> <EMAIL>
-                    - login <USERNAME> <PASSWORD>
-                    - quit
-                    - help
+                    register <USERNAME> <PASSWORD> <EMAIL> - to create an account
+                    login <USERNAME> <PASSWORD> - to play chess
+                    quit - playing chess
+                    help - with possible commands
                     """;
     }
 }

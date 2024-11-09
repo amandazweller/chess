@@ -111,13 +111,13 @@ public class PostLoginClient {
 
     public String help() {
         return """
-                    - create <NAME>
-                    - list
-                    - join <ID> [WHITE|BLACK]
-                    - observe <ID>
-                    - logout
-                    - quit
-                    - help
+                    create <NAME> - a game
+                    list - games
+                    join <ID> [WHITE|BLACK] - a game
+                    observe <ID> - a game
+                    logout - when you are done
+                    quit - playing chess
+                    help - with possible commands
                     """;
     }
 
