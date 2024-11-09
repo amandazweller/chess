@@ -1,5 +1,8 @@
 package ui;
 
+import client.ServerFacade;
+import server.Server;
+
 import java.util.Scanner;
 
 import static com.sun.org.apache.xalan.internal.xsltc.compiler.Constants.RESET;
@@ -7,14 +10,15 @@ import static java.awt.Color.*;
 
 
 public class ReplPostLogin {
-    private final PostLoginClient client;
+    public PostLoginClient client;
 
-    public ReplPostLogin(String serverUrl){
-        client = new PostLoginClient(serverUrl, this);
+    public ReplPostLogin(ServerFacade server){
+        //client = new PostLoginClient(server, this);
     }
 
-    public void run() {
-        System.out.println("\uD83D\uDC36 Welcome to 240 chess. Type Help to get started.");
+    public void run(ServerFacade server) {
+        client = new PostLoginClient(server, this);
+        System.out.println("You have successfully logged in. Type Help to get started.");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

@@ -1,22 +1,24 @@
 package ui;
 
 import java.util.Arrays;
+import java.util.Map;
 
+import com.google.gson.Gson;
 import model.UserData;
 import exception.ResponseException;
 import client.ServerFacade;
+import server.Server;
 
 
 public class PreLoginClient {
     private String username = null;
     private String password = null;
-    private final ServerFacade server;
     private State state = State.LOGGEDOUT;
+    ServerFacade serverFacade;
 
 
-
-    public PreLoginClient(String serverUrl, ReplPreLogin replPreLogin) {
-        server = new ServerFacade(serverUrl);
+    public PreLoginClient(ServerFacade server, ReplPreLogin replPreLogin) {
+        serverFacade = server;
     }
 
     public String eval(String input) {
@@ -40,7 +42,7 @@ public class PreLoginClient {
             state = State.LOGGEDIN;
             username = params[0];
             password = params[1];
-            boolean result = server.loginUser(username, password);
+            boolean result = serverFacade.loginUser(username, password);
             if (result){
                 return String.format("You are now logged in as %s.", username);
             }
@@ -57,7 +59,7 @@ public class PreLoginClient {
             username = params[0];
             password = params[1];
             String email = params[2];
-            boolean result = server.registerUser(username, password, email);
+            boolean result = serverFacade.registerUser(username, password, email);
             if (result){
                 return String.format("You registered as %s.", username);
             }

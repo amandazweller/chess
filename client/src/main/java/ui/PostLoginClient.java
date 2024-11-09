@@ -9,15 +9,13 @@ import client.ServerFacade;
 
 public class PostLoginClient {
     private String username = null;
-    private String password = null;
-    private String email = null;
     private String gameName = null;
-    private final ServerFacade server;
+    ServerFacade serverFacade;
     private State state = State.LOGGEDOUT;
 
 
-    public PostLoginClient(String serverUrl, ReplPostLogin replPostLogin) {
-        server = new ServerFacade(serverUrl);
+    public PostLoginClient(ServerFacade server, ReplPostLogin replPostLogin) {
+        serverFacade = server;
     }
 
     public String eval(String input) {
@@ -43,7 +41,7 @@ public class PostLoginClient {
         if (params.length >= 1) {
             state = State.LOGGEDIN;
             gameName = params[0];
-            boolean result = server.createGame(gameName);
+            boolean result = serverFacade.createGame(gameName);
             if (result){
                 return String.format("Game %s created successfully.", gameName);
             }
@@ -56,7 +54,7 @@ public class PostLoginClient {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
             String playerColor = params[1];
-            boolean result = server.joinGame(id, playerColor);
+            boolean result = serverFacade.joinGame(id, playerColor);
             if (result){
                 return String.format("Game %s joined successfully.", id);
             }
@@ -68,7 +66,7 @@ public class PostLoginClient {
     }
 
     private GameData getGame(int id) throws ResponseException {
-        for (var game : server.listGames()) {
+        for (var game : serverFacade.listGames()) {
             if (game.gameID() == id) {
                 return game;
             }
@@ -80,7 +78,7 @@ public class PostLoginClient {
         if (params.length >= 1) {
             state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
-            boolean result = server.observeGame(id);
+            boolean result = serverFacade.observeGame(id);
             if (result){
                 return String.format("Successfully observing game with id: %s.", id);
             }
@@ -93,14 +91,14 @@ public class PostLoginClient {
 
     public String logoutUser() throws ResponseException {
         assertSignedIn();
-        server.logoutUser();
+        serverFacade.logoutUser();
         state = State.LOGGEDOUT;
         return String.format("%s has logged out", username);
     }
 
     public String listGames() throws ResponseException {
         assertSignedIn();
-        var games = server.listGames();
+        var games = serverFacade.listGames();
         for (int i = 0; i < games.size(); i++) {
             GameData game = games.get(i);
             String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "no player found";
