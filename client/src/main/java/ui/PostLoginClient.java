@@ -4,9 +4,8 @@ import java.util.Arrays;
 
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
 import exception.ResponseException;
-import server.ServerFacade;
+import client.ServerFacade;
 
 
 public class PostLoginClient {
@@ -15,13 +14,11 @@ public class PostLoginClient {
     private String email = null;
     private String gameName = null;
     private final ServerFacade server;
-    private final String serverUrl;
     private State state = State.LOGGEDOUT;
 
 
     public PostLoginClient(String serverUrl, ReplPostLogin replPostLogin) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
     }
 
     public String eval(String input) {

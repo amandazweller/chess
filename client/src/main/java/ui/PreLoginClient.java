@@ -2,11 +2,9 @@ package ui;
 
 import java.util.Arrays;
 
-import com.google.gson.Gson;
-import model.GameData;
 import model.UserData;
 import exception.ResponseException;
-import server.ServerFacade;
+import client.ServerFacade;
 
 
 public class PreLoginClient {
@@ -14,14 +12,12 @@ public class PreLoginClient {
     private String password = null;
     private String email = null;
     private final ServerFacade server;
-    private final String serverUrl;
     private State state = State.LOGGEDOUT;
 
 
 
     public PreLoginClient(String serverUrl, ReplPreLogin replPreLogin) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
     }
 
     public String eval(String input) {

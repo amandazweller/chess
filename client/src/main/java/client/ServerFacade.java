@@ -1,4 +1,4 @@
-package server;
+package client;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -14,7 +14,7 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class ServerFacade {
-    private final String serverUrl;
+    private String serverUrl = "http://localhost:8181";
 
     public ServerFacade(String url){
         serverUrl = url;
