@@ -1,10 +1,8 @@
 package ui;
 import chess.ChessBoard;
-import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import static java.lang.System.out;
 import static ui.EscapeSequences.*;
 
 public class PrintBoard {
@@ -54,13 +52,14 @@ public class PrintBoard {
         else {
             stringBuilder.append("    a  b  c  d  e  f  g  h    ");
         }
-        stringBuilder.append(RESET_BG_COLOR).append(RESET_TEXT_COLOR).append("\n");
+        stringBuilder.append(RESET_BG_COLOR).append(RESET_TEXT_COLOR);
+        stringBuilder.append("\n");
         return stringBuilder.toString();
     }
 
     private String printRow(int row, boolean reversed){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
+        stringBuilder.append(SET_TEXT_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
         stringBuilder.append(" ").append(row).append(" ");
 
         for (int col = 1; col <= 8; col++){
@@ -72,7 +71,7 @@ public class PrintBoard {
             stringBuilder.append(printPiece(row, reversedCol));
         }
 
-        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
+        stringBuilder.append(SET_TEXT_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
         stringBuilder.append(" ").append(row).append(" ");
         return stringBuilder.toString();
     }
@@ -92,6 +91,7 @@ public class PrintBoard {
         StringBuilder stringBuilder = new StringBuilder();
         ChessPosition position = new ChessPosition(row, col);
         ChessPiece piece = board.getPiece(position);
+        stringBuilder.append(SET_TEXT_COLOR_BLUE);
 
         if (piece != null){
             switch(piece.getTeamColor()){

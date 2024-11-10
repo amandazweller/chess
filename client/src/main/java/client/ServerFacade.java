@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class ServerFacade {
-    private String serverUrl = "http://localhost:8181";
+    private final String serverUrl;
     String authToken;
 
     public ServerFacade(String url){
