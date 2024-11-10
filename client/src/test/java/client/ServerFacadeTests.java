@@ -1,6 +1,5 @@
-package clientTest;
+package client;
 
-import client.ServerFacade;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import model.GameData;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.*;
 import server.Server;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
