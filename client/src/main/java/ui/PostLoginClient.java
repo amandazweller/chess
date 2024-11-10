@@ -98,7 +98,7 @@ public class PostLoginClient {
     public String logoutUser() throws ResponseException {
         serverFacade.logoutUser();
         state = State.LOGGEDOUT;
-        return String.format("%s has logged out", username);
+        return String.format("You are now logged out");
     }
 
     public String listGames() throws ResponseException {

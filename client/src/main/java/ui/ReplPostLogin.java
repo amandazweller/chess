@@ -13,7 +13,8 @@ public class ReplPostLogin {
     public PostLoginClient client;
 
     public ReplPostLogin(ServerFacade server){
-        //client = new PostLoginClient(server, this);
+        client = new PostLoginClient(server, this);
+
     }
 
     public void run(ServerFacade server) {
@@ -27,16 +28,18 @@ public class ReplPostLogin {
         while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
-
             try {
                 result = client.eval(line);
                 System.out.print(GREEN + result);
+                if (result.contains("logged out")){
+                    break;
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
             }
+            System.out.println();
         }
-        System.out.println();
     }
 
     private void printPrompt() {

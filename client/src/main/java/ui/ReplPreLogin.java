@@ -1,6 +1,7 @@
 package ui;
 
 import client.ServerFacade;
+import server.Server;
 
 import java.util.Scanner;
 
@@ -35,7 +36,6 @@ public class ReplPreLogin {
                 System.out.print(GREEN + result);
                 if (result.contains("logged in")){
                     replPostLogin.run(server);
-                    break;
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
