@@ -1,7 +1,6 @@
 package ui;
 
 import client.ServerFacade;
-import server.Server;
 
 import java.util.Scanner;
 
@@ -11,7 +10,6 @@ import static java.awt.Color.*;
 
 public class ReplPreLogin {
     private final PreLoginClient client;
-    private State state = State.LOGGEDOUT;
     ReplPostLogin replPostLogin;
     public ServerFacade server;
 

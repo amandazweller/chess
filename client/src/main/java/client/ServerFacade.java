@@ -119,22 +119,6 @@ public class ServerFacade {
         }
     }
 
-    private static String writeBody(Object request, HttpURLConnection http) throws IOException {
-        if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
-            String reqData = new Gson().toJson(request);
-            return reqData;
-        }
-        return "";
-    }
-
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-        var status = http.getResponseCode();
-        if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
-        }
-    }
-
     private String readBody(HttpURLConnection http) throws IOException {
         try (InputStream inputStream = http.getInputStream();
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {

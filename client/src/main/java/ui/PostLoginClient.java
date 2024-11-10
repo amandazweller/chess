@@ -9,10 +9,7 @@ import client.ServerFacade;
 
 
 public class PostLoginClient {
-    private String username = null;
-    private String gameName = null;
     ServerFacade serverFacade;
-    private State state = State.LOGGEDOUT;
 
 
     public PostLoginClient(ServerFacade server, ReplPostLogin replPostLogin) {
@@ -55,8 +52,7 @@ public class PostLoginClient {
 
     public String createGame(String... params) throws ResponseException {
         if (params.length >= 1) {
-            state = State.LOGGEDIN;
-            gameName = params[0];
+            String gameName = params[0];
             boolean result = serverFacade.createGame(gameName);
             if (result){
                 return String.format("Game %s created successfully.", gameName);
@@ -85,18 +81,8 @@ public class PostLoginClient {
         throw new ResponseException(400, "Expected: <ID> <WHITE|BLACK>");
     }
 
-    private GameData getGame(int id) throws ResponseException {
-        for (var game : serverFacade.listGames()) {
-            if (game.gameID() == id) {
-                return game;
-            }
-        }
-        return null;
-    }
-
     public String observeGame(String... params) throws ResponseException {
         if (params.length >= 1) {
-            state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
             boolean result = serverFacade.observeGame(id);
             if (result){
@@ -111,24 +97,23 @@ public class PostLoginClient {
 
     public String logoutUser() throws ResponseException {
         serverFacade.logoutUser();
-        state = State.LOGGEDOUT;
-        return String.format("You are now logged out");
+        return "You are now logged out";
     }
 
     public String listGames() throws ResponseException {
         ArrayList<GameData> games = serverFacade.listGames();
-        String result = "";
+        StringBuilder result = new StringBuilder();
         int i = 1;
         for (GameData game : games) {
             String whiteUser = game.whiteUsername() != null ? game.whiteUsername() : "no player found";
             String blackUser = game.blackUsername() != null ? game.blackUsername() : "no player found";
-            result = result + String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s %n", i, game.gameName(), whiteUser, blackUser);
+            result.append(String.format("%d -- Game Name: %s  |  White User: %s  |  Black User: %s %n", i, game.gameName(), whiteUser, blackUser));
             i++;
         }
         if (games.isEmpty()){
             return "No games found";
         }
-        return result;
+        return result.toString();
     }
 
     public String help() {
