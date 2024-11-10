@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
+import static java.lang.System.out;
 import static ui.EscapeSequences.*;
 
 public class PrintBoard {
@@ -13,13 +14,33 @@ public class PrintBoard {
         this.board = board;
     }
 
-
-    private static final int BOARD_SIZE = 8;
-    private static final int SQAURE_SIZE = 8;
-    private static final int LINE_WIDTH = 1;
-
     public void printBoard() {
         StringBuilder stringBuilder = new StringBuilder();
+        //stringBuilder.append(SET_TEXT_BOLD);
+
+        for (int i = 0; i < 2; i++){
+            boolean reversed = (i == 0);
+
+            stringBuilder.append(printLabels(reversed));
+
+            for (int row = 8; row > 0; row--){
+                int reversedRow = row;
+                if (reversed){
+                    reversedRow = 9 - row;
+                }
+                stringBuilder.append(printRow(row, reversed));
+            }
+
+            stringBuilder.append(printLabels(reversed));
+
+            if (i == 0 ) {
+                stringBuilder.append("\n");
+            }
+        }
+
+        stringBuilder.append(RESET_TEXT_BOLD_FAINT);
+        System.out.println(stringBuilder);
+
     }
 
     private String printLabels(boolean reversed){
