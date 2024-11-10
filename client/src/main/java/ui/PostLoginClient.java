@@ -59,7 +59,7 @@ public class PostLoginClient {
             int id = Integer.parseInt(params[0]);
             ArrayList<GameData> games = serverFacade.listGames();
             GameData gameData = games.get(id - 1);
-            String playerColor = params[1];
+            String playerColor = params[1].toUpperCase();
             boolean result = serverFacade.joinGame(gameData.gameID(), playerColor);
             if (result){
                 return String.format("Game %s joined successfully.", id);
