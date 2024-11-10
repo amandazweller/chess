@@ -67,7 +67,7 @@ public class ServerFacade {
         var body = Map.of("gameName", gameName);
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
-        var response = this.makeRequest("POST", path, jsonBody);
+        var response = makeRequest("POST", path, jsonBody);
         return !response.contains("Error");
     }
 
@@ -76,6 +76,7 @@ public class ServerFacade {
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
         var response = this.makeRequest("PUT", path, jsonBody);
+        System.out.println(response);
         return !response.contains("Error");
     }
 
@@ -85,7 +86,6 @@ public class ServerFacade {
     }
 
     private String makeRequest(String method, String path, String request) throws ResponseException {
-        String response;
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -135,18 +135,18 @@ public class ServerFacade {
         }
     }
 
-        private String readBody(HttpURLConnection http) throws IOException {
-            try (InputStream inputStream = http.getInputStream();
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+    private String readBody(HttpURLConnection http) throws IOException {
+        try (InputStream inputStream = http.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                return response.toString();
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
             }
+            return response.toString();
         }
+    }
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;

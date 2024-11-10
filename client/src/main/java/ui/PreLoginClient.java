@@ -47,7 +47,7 @@ public class PreLoginClient {
                 return String.format("You are now logged in as %s.", username);
             }
             else {
-                return "Username or password already taken. Please try again.";
+                return "Incorrect username or password. Please try again.";
             }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
