@@ -3,7 +3,6 @@ package client;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 
@@ -13,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
-    UserData userData = new UserData("username", "password", "email");
     private static Server server;
 
     private ServerFacade facade;
@@ -106,7 +104,7 @@ public class ServerFacadeTests {
         facade.registerUser("username", "password", "email");
         facade.createGame("gameName");
         ArrayList<GameData> games = facade.listGames();
-        int gameID = games.get(0).gameID();
+        int gameID = games.getFirst().gameID();
         boolean result = facade.joinGame(gameID, "WHITE");
         assertTrue(result);
     }
@@ -115,8 +113,6 @@ public class ServerFacadeTests {
     public void joinGameNegative() throws ResponseException {
         facade.registerUser("username", "password", "email");
         facade.createGame("gameName");
-        ArrayList<GameData> games = facade.listGames();
-        int gameID = games.get(0).gameID();
         boolean result = facade.joinGame(0, "WHITE");
         assertFalse(result);
     }
