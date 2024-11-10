@@ -16,7 +16,7 @@ public class PrintBoard {
 
     public void printBoard() {
         StringBuilder stringBuilder = new StringBuilder();
-        //stringBuilder.append(SET_TEXT_BOLD);
+        stringBuilder.append(SET_TEXT_BOLD);
 
         for (int i = 0; i < 2; i++){
             boolean reversed = (i == 0);
@@ -28,7 +28,8 @@ public class PrintBoard {
                 if (reversed){
                     reversedRow = 9 - row;
                 }
-                stringBuilder.append(printRow(row, reversed));
+                stringBuilder.append(printRow(reversedRow, reversed));
+                stringBuilder.append("\n");
             }
 
             stringBuilder.append(printLabels(reversed));
@@ -45,7 +46,7 @@ public class PrintBoard {
 
     private String printLabels(boolean reversed){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_TEXT_COLOR_BLUE);
+        stringBuilder.append(SET_BG_COLOR_MAGENTA).append(SET_TEXT_COLOR_BLACK);
 
         if (reversed){
             stringBuilder.append("    h  g  f  e  d  c  b  a    ");
@@ -59,7 +60,7 @@ public class PrintBoard {
 
     private String printRow(int row, boolean reversed){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_BLUE);
+        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
         stringBuilder.append(" ").append(row).append(" ");
 
         for (int col = 1; col <= 8; col++){
@@ -71,7 +72,7 @@ public class PrintBoard {
             stringBuilder.append(printPiece(row, reversedCol));
         }
 
-        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_BLUE);
+        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
         stringBuilder.append(" ").append(row).append(" ");
         return stringBuilder.toString();
     }
@@ -81,9 +82,9 @@ public class PrintBoard {
         boolean isEvenCol = (col % 2 == 0);
 
         if ((isEvenRow && isEvenCol) || (!isEvenRow && !isEvenCol)) {
-            return SET_BG_COLOR_WHITE;
-        } else {
             return SET_BG_COLOR_BLACK;
+        } else {
+            return SET_BG_COLOR_WHITE;
         }
     }
 

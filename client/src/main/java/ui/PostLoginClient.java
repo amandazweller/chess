@@ -28,14 +28,29 @@ public class PostLoginClient {
                 case "logout" -> logoutUser();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
-                case "join" -> joinGame(params);
-                case "observe" -> observeGame(params);
+                case "join" -> {
+                    String result = joinGame(params);
+                    printBoard(params);
+                    yield result;
+                }
+                case "observe" -> {
+                    String result = observeGame(params);
+                    printBoard(params);
+                    yield result;
+                }
                 case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    private void printBoard(String[] params) throws ResponseException {
+        int id = Integer.parseInt(params[0]);
+        ArrayList<GameData> games = serverFacade.listGames();
+        GameData gameData = games.get(id - 1);
+        new PrintBoard(gameData.game().getBoard()).printBoard();
     }
 
     public String createGame(String... params) throws ResponseException {
@@ -55,7 +70,6 @@ public class PostLoginClient {
 
     public String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
-            state = State.LOGGEDIN;
             int id = Integer.parseInt(params[0]);
             ArrayList<GameData> games = serverFacade.listGames();
             GameData gameData = games.get(id - 1);
