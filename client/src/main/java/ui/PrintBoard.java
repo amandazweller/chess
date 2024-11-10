@@ -22,12 +22,38 @@ public class PrintBoard {
         StringBuilder stringBuilder = new StringBuilder();
     }
 
+    private String printLabels(boolean reversed){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_TEXT_COLOR_BLUE);
+
+        if (reversed){
+            stringBuilder.append("    h  g  f  e  d  c  b  a    ");
+        }
+        else {
+            stringBuilder.append("    a  b  c  d  e  f  g  h    ");
+        }
+        stringBuilder.append(RESET_BG_COLOR).append(RESET_TEXT_COLOR).append("\n");
+        return stringBuilder.toString();
+    }
+
     private String printRow(int row, boolean reversed){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_BLUE);
-        stringBuilder.append(" ").append(row)
-    }
+        stringBuilder.append(" ").append(row).append(" ");
 
+        for (int col = 1; col <= 8; col++){
+            int reversedCol = col;
+            if (reversed){
+               reversedCol = 9 - col;
+            }
+            stringBuilder.append(printSquareColor(row, reversedCol));
+            stringBuilder.append(printPiece(row, reversedCol));
+        }
+
+        stringBuilder.append(SET_BG_COLOR_BLACK).append(SET_BG_COLOR_BLUE);
+        stringBuilder.append(" ").append(row).append(" ");
+        return stringBuilder.toString();
+    }
 
     private String printSquareColor(int row, int col){
         boolean isEvenRow = (row % 2 == 0);
