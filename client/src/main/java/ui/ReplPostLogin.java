@@ -3,8 +3,9 @@ package ui;
 import client.ServerFacade;
 
 import java.util.Scanner;
+import static ui.EscapeSequences.*;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.Constants.RESET;
+
 import static java.awt.Color.*;
 
 
@@ -42,7 +43,7 @@ public class ReplPostLogin {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET + ">>> " + BLUE);
+        System.out.print("\n" + RESET_TEXT_COLOR + RESET_BG_COLOR);
     }
 
 }
