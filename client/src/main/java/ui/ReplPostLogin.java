@@ -19,7 +19,7 @@ public class ReplPostLogin {
 
     public void run(ServerFacade server) {
         client = new PostLoginClient(server, this);
-        System.out.println("You have successfully logged in.");
+        System.out.println("Welcome to Chess240.");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -30,7 +30,7 @@ public class ReplPostLogin {
             String line = scanner.nextLine();
             try {
                 result = client.eval(line);
-                System.out.print(GREEN + result);
+                System.out.print(result);
                 if (result.contains("logged out")){
                     break;
                 }

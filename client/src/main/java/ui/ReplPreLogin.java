@@ -31,7 +31,7 @@ public class ReplPreLogin {
 
             try {
                 result = client.eval(line);
-                System.out.print(GREEN + result);
+                System.out.print(result);
                 if (result.contains("logged in")){
                     replPostLogin.run(server);
                 }

@@ -76,7 +76,6 @@ public class ServerFacade {
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
         var response = this.makeRequest("PUT", path, jsonBody);
-        System.out.println(response);
         return !response.contains("Error");
     }
 

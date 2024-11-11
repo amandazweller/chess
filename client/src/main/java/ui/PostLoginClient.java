@@ -25,11 +25,7 @@ public class PostLoginClient {
                 case "logout" -> logoutUser();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
-                case "join" -> {
-                    String result = joinGame(params);
-                    printBoard(params);
-                    yield result;
-                }
+                case "join" -> joinGame(params);
                 case "observe" -> {
                     String result = observeGame(params);
                     printBoard(params);
@@ -66,12 +62,18 @@ public class PostLoginClient {
 
     public String joinGame(String... params) throws ResponseException {
         if (params.length >= 2) {
-            int id = Integer.parseInt(params[0]);
+            int id;
+            try {
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException ex) {
+                throw new ResponseException(400, "Please enter valid ID");
+            }
             ArrayList<GameData> games = serverFacade.listGames();
             GameData gameData = games.get(id - 1);
             String playerColor = params[1].toUpperCase();
             boolean result = serverFacade.joinGame(gameData.gameID(), playerColor);
             if (result){
+                printBoard(params);
                 return String.format("Game %s joined successfully.", id);
             }
             else {

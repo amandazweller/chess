@@ -53,7 +53,7 @@ public class PreLoginClient {
             String email = params[2];
             boolean result = serverFacade.registerUser(username, password, email);
             if (result){
-                return String.format("You registered as %s.", username);
+                return String.format("You registered as %s. You are now logged in. ", username);
             }
             else {
                 return "Username already taken";
