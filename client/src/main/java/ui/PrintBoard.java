@@ -73,6 +73,7 @@ public class PrintBoard {
 
         stringBuilder.append(SET_TEXT_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
         stringBuilder.append(" ").append(row).append(" ");
+        stringBuilder.append(RESET_BG_COLOR).append(RESET_TEXT_COLOR);
         return stringBuilder.toString();
     }
 
