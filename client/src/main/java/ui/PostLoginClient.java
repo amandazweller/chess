@@ -69,6 +69,9 @@ public class PostLoginClient {
                 throw new ResponseException(400, "Please enter valid ID");
             }
             ArrayList<GameData> games = serverFacade.listGames();
+            if (id > games.size()){
+                throw new ResponseException(400, "Please enter valid ID");
+            }
             GameData gameData = games.get(id - 1);
             String playerColor = params[1].toUpperCase();
             boolean result = serverFacade.joinGame(gameData.gameID(), playerColor);
@@ -85,10 +88,20 @@ public class PostLoginClient {
 
     public String observeGame(String... params) throws ResponseException {
         if (params.length >= 1) {
-            int id = Integer.parseInt(params[0]);
-            boolean result = serverFacade.observeGame(id);
+            int parsedInt;
+            try {
+                parsedInt = Integer.parseInt(params[0]);
+            } catch (NumberFormatException ex) {
+                throw new ResponseException(400, "Please enter valid ID");
+            }
+            ArrayList<GameData> games = serverFacade.listGames();
+            if (parsedInt > games.size()){
+                throw new ResponseException(400, "Please enter valid ID");
+            }
+            GameData gameData = games.get(parsedInt - 1);
+            boolean result = serverFacade.observeGame(parsedInt);
             if (result){
-                return String.format("Successfully observing game with id: %s.", id);
+                return String.format("Successfully observing game with id: %s.", parsedInt);
             }
             else {
                 return "Game does not exist. Please try again.";
