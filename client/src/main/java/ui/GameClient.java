@@ -1,14 +1,12 @@
 package ui;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Map;
 
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
-import model.GameData;
 import exception.ResponseException;
 import client.ServerFacade;
 
@@ -41,19 +39,35 @@ public class GameClient {
 
     private String highlightMoves(String... params) throws ResponseException {
         if (params.length >= 1){
-            ChessPosition start = new ChessPosition(params[0].charAt(1) - '0', params[0].charAt(0) - ('a' - 1));
+            ChessPosition start = new ChessPosition(Character.getNumericValue(params[0].charAt(1)), toColumn.get(params[0].charAt(0)));
+            if (serverFacade.game.getBoard().getPiece(start) == null){
+                return "No piece found at selected position. Try another position.";
+            }
             serverFacade.printBoard(start);
             return "Valid moves highlighted in green.";
         }
         throw new ResponseException(400, "Expected: <POSITION>");
     }
 
+    private static final Map<Character, Integer> toColumn = Map.of(
+            'a', 1, 'b', 2, 'c', 3, 'd', 4, 'e', 5, 'f', 6, 'g', 7, 'h', 8
+    );
+
     private String makeMove(String... params) throws InvalidMoveException, ResponseException {
         if (params.length >= 2) {
-            String from = params[0];
-            ChessPosition start = new ChessPosition(from.charAt(1) - '0', from.charAt(0) - ('a' - 1));
-            String to = params[1];
-            ChessPosition end = new ChessPosition(to.charAt(1) - '0', to.charAt(0) - ('a' - 1));
+            if (!serverFacade.playing){
+                return "You are not currently playing. Unable to make move.";
+            }
+            if (serverFacade.game.getTeamTurn() != serverFacade.teamColor){
+                return "Other team's turn. Please wait to make move.";
+            }
+
+            int startCol = toColumn.get(params[0].charAt(1));
+            int startRow = Character.getNumericValue(params[0].charAt(1));
+            ChessPosition start = new ChessPosition(startRow, startCol);
+            int endCol = toColumn.get(params[1].charAt(1));
+            int endRow = Character.getNumericValue(params[1].charAt(1));
+            ChessPosition end = new ChessPosition(endRow, endCol);
 
             ChessPiece.PieceType promotionPiece = null;
             if (params.length >= 3) {

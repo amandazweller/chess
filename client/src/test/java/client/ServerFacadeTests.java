@@ -104,8 +104,8 @@ public class ServerFacadeTests {
         facade.registerUser("username", "password", "email");
         facade.createGame("gameName");
         ArrayList<GameData> games = facade.listGames();
-        int gameID = games.getFirst().gameID();
-        boolean result = facade.joinGame(gameID, "WHITE");
+        GameData gameData = games.getFirst();
+        boolean result = facade.joinGame(gameData, "WHITE");
         assertTrue(result);
     }
 
@@ -113,7 +113,7 @@ public class ServerFacadeTests {
     public void joinGameNegative() throws ResponseException {
         facade.registerUser("username", "password", "email");
         facade.createGame("gameName");
-        boolean result = facade.joinGame(0, "WHITE");
+        boolean result = facade.joinGame(new GameData(0, null, null, null, null), "WHITE");
         assertFalse(result);
     }
 }

@@ -24,6 +24,8 @@ public class UserGameCommand {
 
     public enum CommandType {
         CONNECT,
+        JOIN_OBSERVER,
+        JOIN_PLAYER,
         MAKE_MOVE,
         LEAVE,
         RESIGN

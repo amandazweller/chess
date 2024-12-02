@@ -20,6 +20,7 @@ public class ServerFacade {
     int currentGameID;
     public ChessGame game;
     public String currentUsername;
+    public boolean playing = false;
 
     public ServerFacade(String url){
         serverUrl = url;
@@ -85,6 +86,7 @@ public class ServerFacade {
         teamColor = ChessGame.TeamColor.valueOf(playerColor);
         currentGameID = gameData.gameID();
         game = gameData.game();
+        playing = true;
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
         var response = this.makeRequest("PUT", path, jsonBody);
