@@ -1,23 +1,36 @@
 package ui;
-import chess.ChessBoard;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
 public class PrintBoard {
-    ChessBoard board;
+    ChessGame game;
 
-    PrintBoard(ChessBoard board) {
-        this.board = board;
+    PrintBoard(ChessGame game) {
+        this.game = game;
     }
 
-    public void printBoard() {
+    public void printBoard(ChessGame.TeamColor teamColor, ChessPosition highlighted) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(SET_TEXT_BOLD);
 
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+        if (highlighted != null){
+            Collection<ChessMove> validMoves = game.validMoves(highlighted);
+            if (!validMoves.isEmpty()){
+                for (ChessMove validMove : validMoves){
+                    endPositions.add(validMove.getEndPosition());
+                }
+            }
+        }
+        boolean reversed = false;
+        if (teamColor == ChessGame.TeamColor.BLACK){
+            reversed = true;
+        }
         for (int i = 0; i < 2; i++){
-            boolean reversed = (i == 0);
 
             stringBuilder.append(printLabels(reversed));
 
@@ -26,7 +39,7 @@ public class PrintBoard {
                 if (reversed){
                     reversedRow = 9 - row;
                 }
-                stringBuilder.append(printRow(reversedRow, reversed));
+                stringBuilder.append(printRow(reversedRow, reversed, highlighted, endPositions));
                 stringBuilder.append("\n");
             }
 
@@ -57,7 +70,7 @@ public class PrintBoard {
         return stringBuilder.toString();
     }
 
-    private String printRow(int row, boolean reversed){
+    private String printRow(int row, boolean reversed, ChessPosition start, Collection<ChessPosition> highlighted){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(SET_TEXT_COLOR_BLACK).append(SET_BG_COLOR_MAGENTA);
         stringBuilder.append(" ").append(row).append(" ");
@@ -67,7 +80,7 @@ public class PrintBoard {
             if (reversed){
                reversedCol = 9 - col;
             }
-            stringBuilder.append(printSquareColor(row, reversedCol));
+            stringBuilder.append(printSquareColor(row, reversedCol, start, highlighted));
             stringBuilder.append(printPiece(row, reversedCol));
         }
 
@@ -77,13 +90,23 @@ public class PrintBoard {
         return stringBuilder.toString();
     }
 
-    private String printSquareColor(int row, int col){
+    private String printSquareColor(int row, int col, ChessPosition start, Collection<ChessPosition> highlighted){
+        ChessPosition position = new ChessPosition(row, col);
+        if (start.equals(position)){
+            return SET_BG_COLOR_MAGENTA;
+        }
         boolean isEvenRow = (row % 2 == 0);
         boolean isEvenCol = (col % 2 == 0);
 
         if ((isEvenRow && isEvenCol) || (!isEvenRow && !isEvenCol)) {
+            if (highlighted.contains(position)){
+                return SET_BG_COLOR_DARK_GREEN;
+            }
             return SET_BG_COLOR_BLACK;
         } else {
+            if (highlighted.contains(position)){
+                return SET_BG_COLOR_GREEN;
+            }
             return SET_BG_COLOR_WHITE;
         }
     }
@@ -91,7 +114,7 @@ public class PrintBoard {
     private String printPiece(int row, int col){
         StringBuilder stringBuilder = new StringBuilder();
         ChessPosition position = new ChessPosition(row, col);
-        ChessPiece piece = board.getPiece(position);
+        ChessPiece piece = game.getBoard().getPiece(position);
         stringBuilder.append(SET_TEXT_COLOR_BLUE);
 
         if (piece != null){

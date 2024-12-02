@@ -30,7 +30,7 @@ public class PostLoginClient {
                 case "join" -> joinGame(params);
                 case "observe" -> {
                     String result = observeGame(params);
-                    printBoard(params);
+                    printBoardObserve(params);
                     yield result;
                 }
                 case "quit" -> "quit";
@@ -41,11 +41,11 @@ public class PostLoginClient {
         }
     }
 
-    private void printBoard(String[] params) throws ResponseException {
+    private void printBoardObserve(String[] params) throws ResponseException {
         int id = Integer.parseInt(params[0]);
         ArrayList<GameData> games = serverFacade.listGames();
         GameData gameData = games.get(id - 1);
-        new PrintBoard(gameData.game().getBoard()).printBoard();
+        new PrintBoard(gameData.game()).printBoard(null, null);
     }
 
     public String createGame(String... params) throws ResponseException {

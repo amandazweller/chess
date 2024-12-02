@@ -11,9 +11,9 @@ import client.ServerFacade;
 public class GameClient {
     ServerFacade serverFacade;
 
-
     public GameClient(ServerFacade server, ReplGame replGame) {
         serverFacade = server;
+
     }
 
     public String eval(String input) {
