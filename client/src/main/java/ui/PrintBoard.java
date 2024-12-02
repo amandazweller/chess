@@ -30,25 +30,20 @@ public class PrintBoard {
         if (teamColor == ChessGame.TeamColor.BLACK){
             reversed = true;
         }
-        for (int i = 0; i < 2; i++){
 
-            stringBuilder.append(printLabels(reversed));
+        stringBuilder.append(printLabels(reversed));
 
-            for (int row = 8; row > 0; row--){
-                int reversedRow = row;
-                if (reversed){
-                    reversedRow = 9 - row;
-                }
-                stringBuilder.append(printRow(reversedRow, reversed, highlighted, endPositions));
-                stringBuilder.append("\n");
+        for (int row = 8; row > 0; row--){
+            int reversedRow = row;
+            if (reversed){
+                reversedRow = 9 - row;
             }
-
-            stringBuilder.append(printLabels(reversed));
-
-            if (i == 0 ) {
-                stringBuilder.append("\n");
-            }
+            stringBuilder.append(printRow(reversedRow, reversed, highlighted, endPositions));
+            stringBuilder.append("\n");
         }
+
+        stringBuilder.append(printLabels(reversed));
+        stringBuilder.append("\n");
 
         stringBuilder.append(RESET_TEXT_BOLD_FAINT);
         System.out.println(stringBuilder);
@@ -92,8 +87,8 @@ public class PrintBoard {
 
     private String printSquareColor(int row, int col, ChessPosition start, Collection<ChessPosition> highlighted){
         ChessPosition position = new ChessPosition(row, col);
-        if (start.equals(position)){
-            return SET_BG_COLOR_MAGENTA;
+        if (start != null && start.equals(position)){
+            return SET_BG_COLOR_RED;
         }
         boolean isEvenRow = (row % 2 == 0);
         boolean isEvenCol = (col % 2 == 0);

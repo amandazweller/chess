@@ -15,11 +15,9 @@ public class ReplGame {
 
     public ReplGame(ServerFacade server){
         client = new GameClient(server, this);
-
     }
 
     public void run(ServerFacade server) throws ResponseException {
-        client = new GameClient(server, this);
         client.serverFacade.printBoard(null);
         System.out.print(client.help());
 

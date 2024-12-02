@@ -69,7 +69,7 @@ public class PostLoginClient {
             String playerColor = params[1].toUpperCase();
             boolean result = serverFacade.joinGame(gameData, playerColor);
             if (result){
-                return String.format("Game %s joined successfully.", id);
+                return String.format("Game %s joined successfully. \n", id);
             }
             else {
                 return "Game does not exist or color already taken. Please try again.";

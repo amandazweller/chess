@@ -170,7 +170,7 @@ public class ChessGame {
         }
         TeamColor color = board.getPiece(move.getStartPosition()).getTeamColor();
         if (color != teamTurn){
-            throw new InvalidMoveException("Not right team");
+            throw new InvalidMoveException("Currently other team's turn");
         }
         Collection<ChessMove> allMoves = validMoves(move.getStartPosition());
         if (!allMoves.isEmpty()){

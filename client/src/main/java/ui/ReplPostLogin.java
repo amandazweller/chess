@@ -15,7 +15,7 @@ public class ReplPostLogin {
 
     public ReplPostLogin(ServerFacade server){
         client = new PostLoginClient(server, this);
-        ReplGame replGame = new ReplGame(server);
+        replGame = new ReplGame(server);
 
     }
 

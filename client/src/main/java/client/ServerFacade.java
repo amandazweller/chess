@@ -156,4 +156,5 @@ public class ServerFacade {
     public void printBoard(ChessPosition highlighted) throws ResponseException {
         new PrintBoard(game).printBoard(teamColor, highlighted);
     }
+
 }

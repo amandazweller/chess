@@ -29,7 +29,7 @@ public class GameClient {
             return switch (cmd) {
                 case "redraw" -> redrawBoard();
                 case "move" -> makeMove(params);
-                case "highlightMoves" -> highlightMoves(params);
+                case "highlight" -> highlightMoves(params);
                 case "resign" -> resign();
                 case "leave" -> "leave";
                 default -> help();
@@ -80,7 +80,7 @@ public class GameClient {
 
     private String redrawBoard() throws ResponseException {
         serverFacade.printBoard(null);
-        return null;
+        return " ";
     }
 
     private String resign() {
@@ -90,7 +90,7 @@ public class GameClient {
     public String help() {
         return """
                     move <FROM> <TO> <PROMOTION-PIECE> - make a move (promotion piece only used when the move will result in promotion of pawn)
-                    highlightMoves <POSITION> - highlight all legal moves for this piece
+                    highlight <POSITION> - highlight all legal moves for this piece
                     redraw - redraw board
                     leave - leave game
                     resign - forfeit game
