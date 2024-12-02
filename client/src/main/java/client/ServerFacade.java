@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
@@ -13,6 +14,8 @@ import java.util.Map;
 public class ServerFacade {
     private final String serverUrl;
     String authToken;
+    ChessGame.TeamColor teamColor = null;
+    int currentGameID;
 
     public ServerFacade(String url){
         serverUrl = url;
@@ -73,6 +76,8 @@ public class ServerFacade {
 
     public boolean joinGame(int gameID, String playerColor) throws ResponseException {
         var body = Map.of("gameID", gameID, "playerColor", playerColor);
+        teamColor = ChessGame.TeamColor.valueOf(playerColor);
+        currentGameID = gameID;
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
         var response = this.makeRequest("PUT", path, jsonBody);
@@ -136,6 +141,8 @@ public class ServerFacade {
     }
 
     public boolean observeGame(int gameID) {
+        currentGameID = gameID;
+        teamColor = null;
         return true;
     }
 }

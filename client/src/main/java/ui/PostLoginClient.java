@@ -3,6 +3,7 @@ package ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import chess.ChessGame;
 import model.GameData;
 import exception.ResponseException;
 import client.ServerFacade;
@@ -10,6 +11,7 @@ import client.ServerFacade;
 
 public class PostLoginClient {
     ServerFacade serverFacade;
+
 
 
     public PostLoginClient(ServerFacade server, ReplPostLogin replPostLogin) {
@@ -76,7 +78,6 @@ public class PostLoginClient {
             String playerColor = params[1].toUpperCase();
             boolean result = serverFacade.joinGame(gameData.gameID(), playerColor);
             if (result){
-                printBoard(params);
                 return String.format("Game %s joined successfully.", id);
             }
             else {

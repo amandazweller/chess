@@ -11,9 +11,11 @@ import static java.awt.Color.*;
 
 public class ReplPostLogin {
     public PostLoginClient client;
+    ReplGame replGame;
 
     public ReplPostLogin(ServerFacade server){
         client = new PostLoginClient(server, this);
+        ReplGame replGame = new ReplGame(server);
 
     }
 
@@ -33,6 +35,9 @@ public class ReplPostLogin {
                 System.out.print(result);
                 if (result.contains("logged out")){
                     break;
+                }
+                if (result.contains("joined")){
+                    replGame.run(server);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
