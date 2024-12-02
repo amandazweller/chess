@@ -2,7 +2,12 @@ package ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import model.GameData;
 import exception.ResponseException;
 import client.ServerFacade;
@@ -24,26 +29,57 @@ public class GameClient {
             return switch (cmd) {
                 case "redraw" -> redrawBoard();
                 case "move" -> makeMove(params);
-                case "highlightMoves" -> highlightMoves();
+                case "highlightMoves" -> highlightMoves(params);
                 case "resign" -> resign();
-
                 case "leave" -> "leave";
                 default -> help();
             };
-        } catch (ResponseException ex) {
+        } catch (ResponseException | InvalidMoveException ex) {
             return ex.getMessage();
         }
     }
 
-    private String highlightMoves() {
-        return null;
+    private String highlightMoves(String... params) throws ResponseException {
+        if (params.length >= 1){
+            ChessPosition start = new ChessPosition(params[0].charAt(1) - '0', params[0].charAt(0) - ('a' - 1));
+            serverFacade.printBoard(start);
+            return "Valid moves highlighted in green.";
+        }
+        throw new ResponseException(400, "Expected: <POSITION>");
     }
 
-    private String makeMove(String[] params) {
-        return null;
+    private String makeMove(String... params) throws InvalidMoveException, ResponseException {
+        if (params.length >= 2) {
+            String from = params[0];
+            ChessPosition start = new ChessPosition(from.charAt(1) - '0', from.charAt(0) - ('a' - 1));
+            String to = params[1];
+            ChessPosition end = new ChessPosition(to.charAt(1) - '0', to.charAt(0) - ('a' - 1));
+
+            ChessPiece.PieceType promotionPiece = null;
+            if (params.length >= 3) {
+                promotionPiece = getPieceType(params[2]);
+            }
+            ChessMove move = new ChessMove(start, end, promotionPiece);
+            serverFacade.game.makeMove(move);
+            redrawBoard();
+            return "Move made successfully";
+        }
+            throw new ResponseException(400, "Expected: <FROM> <TO> <PROMOTION-PIECE> (promotion piece only applicable with promotion of pawn)");
     }
 
-    private String redrawBoard() {
+    public ChessPiece.PieceType getPieceType(String name) {
+        return switch (name.toUpperCase()) {
+            case "QUEEN" -> ChessPiece.PieceType.QUEEN;
+            case "BISHOP" -> ChessPiece.PieceType.BISHOP;
+            case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
+            case "ROOK" -> ChessPiece.PieceType.ROOK;
+            case "PAWN" -> ChessPiece.PieceType.PAWN;
+            default -> null;
+        };
+    }
+
+    private String redrawBoard() throws ResponseException {
+        serverFacade.printBoard(null);
         return null;
     }
 
@@ -54,11 +90,10 @@ public class GameClient {
     public String help() {
         return """
                     move <FROM> <TO> <PROMOTION-PIECE> - make a move (promotion piece only used when the move will result in promotion of pawn)
-                    highlightMoves <position> - highlight all legal moves for this piece
+                    highlightMoves <POSITION> - highlight all legal moves for this piece
                     redraw - redraw board
                     leave - leave game
                     resign - forfeit game
-                    quit - playing chess
                     help - with possible commands
                     """;
     }

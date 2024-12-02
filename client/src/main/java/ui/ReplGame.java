@@ -1,6 +1,7 @@
 package ui;
 
 import client.ServerFacade;
+import exception.ResponseException;
 
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
@@ -17,9 +18,9 @@ public class ReplGame {
 
     }
 
-    public void run(ServerFacade server) {
+    public void run(ServerFacade server) throws ResponseException {
         client = new GameClient(server, this);
-        client.serverFacade.printBoard();
+        client.serverFacade.printBoard(null);
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

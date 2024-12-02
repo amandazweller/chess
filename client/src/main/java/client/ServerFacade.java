@@ -18,7 +18,7 @@ public class ServerFacade {
     String authToken;
     ChessGame.TeamColor teamColor = null;
     int currentGameID;
-    ChessGame game;
+    public ChessGame game;
 
     public ServerFacade(String url){
         serverUrl = url;
@@ -150,7 +150,7 @@ public class ServerFacade {
         return true;
     }
 
-    private void printBoard(ChessGame.TeamColor teamColor, ChessPosition highlighted) throws ResponseException {
+    public void printBoard(ChessPosition highlighted) throws ResponseException {
         new PrintBoard(game).printBoard(teamColor, highlighted);
     }
 }
