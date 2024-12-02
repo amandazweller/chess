@@ -84,7 +84,7 @@ public class GameClient {
     }
 
     private String resign() {
-        return null;
+        return String.format("%s resigned successfully. Game over.", serverFacade.currentUsername);
     }
 
     public String help() {

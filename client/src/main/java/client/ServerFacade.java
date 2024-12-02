@@ -16,9 +16,10 @@ import java.util.Map;
 public class ServerFacade {
     private final String serverUrl;
     String authToken;
-    ChessGame.TeamColor teamColor = null;
+    public ChessGame.TeamColor teamColor = null;
     int currentGameID;
     public ChessGame game;
+    public String currentUsername;
 
     public ServerFacade(String url){
         serverUrl = url;
@@ -47,6 +48,7 @@ public class ServerFacade {
         }
         Map responseMap = new Gson().fromJson(response, Map.class);
         authToken = (String) responseMap.get("authToken");
+        currentUsername = username;
         return !response.contains("Error");
     }
 
