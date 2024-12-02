@@ -19,6 +19,7 @@ public class ReplGame {
 
     public void run(ServerFacade server) {
         client = new GameClient(server, this);
+        client.serverFacade.printBoard();
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

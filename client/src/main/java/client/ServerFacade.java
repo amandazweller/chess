@@ -1,10 +1,12 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.GameData;
 import model.ListGameResponse;
+import ui.PrintBoard;
 
 import java.io.*;
 import java.net.*;
@@ -16,6 +18,7 @@ public class ServerFacade {
     String authToken;
     ChessGame.TeamColor teamColor = null;
     int currentGameID;
+    ChessGame game;
 
     public ServerFacade(String url){
         serverUrl = url;
@@ -74,10 +77,11 @@ public class ServerFacade {
         return !response.contains("Error");
     }
 
-    public boolean joinGame(int gameID, String playerColor) throws ResponseException {
-        var body = Map.of("gameID", gameID, "playerColor", playerColor);
+    public boolean joinGame(GameData gameData, String playerColor) throws ResponseException {
+        var body = Map.of("gameID", gameData.gameID(), "playerColor", playerColor);
         teamColor = ChessGame.TeamColor.valueOf(playerColor);
-        currentGameID = gameID;
+        currentGameID = gameData.gameID();
+        game = gameData.game();
         var jsonBody = new Gson().toJson(body);
         var path = "/game";
         var response = this.makeRequest("PUT", path, jsonBody);
@@ -144,5 +148,9 @@ public class ServerFacade {
         currentGameID = gameID;
         teamColor = null;
         return true;
+    }
+
+    private void printBoard(ChessGame.TeamColor teamColor, ChessPosition highlighted) throws ResponseException {
+        new PrintBoard(game).printBoard(teamColor, highlighted);
     }
 }

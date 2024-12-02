@@ -9,7 +9,7 @@ import static ui.EscapeSequences.*;
 public class PrintBoard {
     ChessGame game;
 
-    PrintBoard(ChessGame game) {
+    public PrintBoard(ChessGame game) {
         this.game = game;
     }
 

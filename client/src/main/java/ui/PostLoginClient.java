@@ -28,11 +28,7 @@ public class PostLoginClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-                case "observe" -> {
-                    String result = observeGame(params);
-                    printBoardObserve(params);
-                    yield result;
-                }
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -41,12 +37,7 @@ public class PostLoginClient {
         }
     }
 
-    private void printBoardObserve(String[] params) throws ResponseException {
-        int id = Integer.parseInt(params[0]);
-        ArrayList<GameData> games = serverFacade.listGames();
-        GameData gameData = games.get(id - 1);
-        new PrintBoard(gameData.game()).printBoard(null, null);
-    }
+
 
     public String createGame(String... params) throws ResponseException {
         if (params.length >= 1) {
@@ -76,7 +67,7 @@ public class PostLoginClient {
             }
             GameData gameData = games.get(id - 1);
             String playerColor = params[1].toUpperCase();
-            boolean result = serverFacade.joinGame(gameData.gameID(), playerColor);
+            boolean result = serverFacade.joinGame(gameData, playerColor);
             if (result){
                 return String.format("Game %s joined successfully.", id);
             }
