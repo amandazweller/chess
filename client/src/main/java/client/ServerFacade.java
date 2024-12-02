@@ -59,6 +59,7 @@ public class ServerFacade {
             return false;
         }
         authToken = null;
+        currentUsername = null;
         return !response.contains("Error");    }
 
     public ArrayList<GameData> listGames() throws ResponseException {
