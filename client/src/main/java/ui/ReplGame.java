@@ -24,15 +24,12 @@ public class ReplGame {
         Scanner scanner = new Scanner(System.in);
         var result = "";
 
-        while (!result.equals("quit")) {
+        while (!result.equals("leave")) {
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = client.eval(line);
                 System.out.print(result);
-                if (result.contains("left game")){
-                    break;
-                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

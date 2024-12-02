@@ -53,11 +53,11 @@ public class GameClient {
 
     public String help() {
         return """
-                    create <NAME> - a game
-                    list - games
-                    join <ID> [WHITE|BLACK] - a game
-                    observe <ID> - a game
-                    logout - when you are done
+                    move <FROM> <TO> <PROMOTION-PIECE> - make a move (promotion piece only used when the move will result in promotion of pawn)
+                    highlightMoves <position> - highlight all legal moves for this piece
+                    redraw - redraw board
+                    leave - leave game
+                    resign - forfeit game
                     quit - playing chess
                     help - with possible commands
                     """;
