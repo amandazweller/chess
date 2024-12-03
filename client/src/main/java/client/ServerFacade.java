@@ -195,12 +195,8 @@ public class ServerFacade {
         webSocketFacade.sendMessage(message);
     }
 
-    public void joinObserver(int gameID) throws ResponseException {
-        sendCommand(new JoinObserver(authToken, gameID));
-    }
-
-    public void joinPlayer(int gameID, ChessGame.TeamColor color) throws ResponseException {
-        sendCommand(new JoinPlayer(authToken, gameID, color));
+    public void connect(int gameID, ChessGame.TeamColor color) throws ResponseException {
+        sendCommand(new Connect(authToken, gameID, color));
     }
 
     public void makeMove(int gameID, ChessMove move) throws ResponseException {

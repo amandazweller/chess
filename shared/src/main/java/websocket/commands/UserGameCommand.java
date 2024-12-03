@@ -14,7 +14,7 @@ public class UserGameCommand {
 
     private final String authToken;
 
-    private final Integer gameID;
+    public final Integer gameID;
 
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
         this.commandType = commandType;
@@ -24,8 +24,6 @@ public class UserGameCommand {
 
     public enum CommandType {
         CONNECT,
-        JOIN_OBSERVER,
-        JOIN_PLAYER,
         MAKE_MOVE,
         LEAVE,
         RESIGN

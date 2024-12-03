@@ -5,15 +5,20 @@ import dataaccess.*;
 import exceptions.ResponseException;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.*;
 import chess.ChessGame;
 import model.GameData;
 import websocket.messages.*;
 import websocket.messages.Error;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 
+@WebSocket
 public class WebsocketHandler {
+
     AuthDAO authDAO = new MySqlAuthDAO();
     UserDAO userDAO = new MySqlUserDAO();
     GameDAO gameDAO = new MySqlGameDAO();
@@ -21,6 +26,7 @@ public class WebsocketHandler {
 
     public WebsocketHandler() throws DataAccessException {
     }
+
 
     public void handleConnect(Session session) {
             Server.allSessions.put(session, 0);
@@ -30,13 +36,13 @@ public class WebsocketHandler {
             Server.allSessions.remove(session);
         }
 
+    @OnWebSocketMessage
     public void handleMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         System.out.printf("Received: %s%n", message);
 
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case JOIN_PLAYER -> joinPlayer(session, new Gson().fromJson(message, JoinPlayer.class));
-            case JOIN_OBSERVER -> joinObserver(session, new Gson().fromJson(message, JoinObserver.class));
+            case CONNECT -> connect(session, new Gson().fromJson(message, Connect.class));
             case MAKE_MOVE -> makeMove(session, new Gson().fromJson(message, MakeMove.class));
             case LEAVE -> leave(session, new Gson().fromJson(message, Leave.class));
             case RESIGN -> resign(session, new Gson().fromJson(message, Resign.class));
@@ -139,31 +145,27 @@ public class WebsocketHandler {
         notifyAll(session, new LoadGame(game.game()));
     }
 
-    private void joinObserver(Session session, JoinObserver command) throws IOException {
+    private void connect(Session session, Connect command) throws DataAccessException, IOException {
         try {
             AuthData auth = authDAO.getAuth(command.getAuthToken());
             GameData game = gameDAO.getGame(command.getGameID());
 
-            Notification notification = new Notification("%s has joined the game as an observer".formatted(auth.username()));
-            notifyAll(session, notification);
+            if (command.getColor() == null){
+                try {
+                    Notification notification = new Notification("%s joined the game as observer".formatted(auth.username()));
+                    notifyAll(session, notification);
+                } catch (ResponseException e) {
+                    sendError(session, new Error("Error: Not authorized"));
+                }
+                try{
+                    LoadGame load = new LoadGame(game.game());
+                    sendMessage(session, load);
+                    return;
+                } catch (ResponseException e) {
+                    sendError(session, new Error("Error: Not a valid game"));
+                }
 
-            LoadGame load = new LoadGame(game.game());
-            sendMessage(session, load);
-        }
-        catch (DataAccessException e) {
-            sendError(session, new Error("Error: Not authorized"));
-        } catch (ResponseException e) {
-            sendError(session, new Error("Error: Not a valid game"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void joinPlayer(Session session, JoinPlayer command) throws DataAccessException, IOException {
-        try {
-            AuthData auth = authDAO.getAuth(command.getAuthToken());
-
-            GameData game = gameDAO.getGame(command.getGameID());
+            }
 
             ChessGame.TeamColor playerColor = command.getColor().toString().equalsIgnoreCase("white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
 
