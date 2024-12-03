@@ -10,7 +10,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
+    boolean gameOver = false;
     private TeamColor teamTurn;
     private ChessBoard board = new ChessBoard();
 
@@ -38,31 +38,39 @@ public class ChessGame {
     public void initalizeBoard(){
         board.grid = new ChessPiece[8][8];
 
-        board.grid[0][0] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        board.grid[0][1] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        board.grid[0][2] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        board.grid[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        board.grid[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-        board.grid[0][5] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        board.grid[0][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        board.grid[0][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        board.grid[0][0] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        board.grid[0][1] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        board.grid[0][2] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        board.grid[0][3] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        board.grid[0][4] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING);
+        board.grid[0][5] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        board.grid[0][6] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        board.grid[0][7] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.ROOK);
 
         for (int i = 0; i < 8; i++) {
-            board.grid[1][i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            board.grid[1][i] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         }
 
-        board.grid[7][0] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        board.grid[7][1] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        board.grid[7][2] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        board.grid[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        board.grid[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-        board.grid[7][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        board.grid[7][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        board.grid[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        board.grid[7][0] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        board.grid[7][1] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        board.grid[7][2] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        board.grid[7][3] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        board.grid[7][4] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING);
+        board.grid[7][5] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        board.grid[7][6] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        board.grid[7][7] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
         for (int i = 0; i < 8; i++) {
-            board.grid[6][i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            board.grid[6][i] = new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     /**
