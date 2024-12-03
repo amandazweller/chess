@@ -1,7 +1,12 @@
 package client.websocket;
 
+import chess.ChessGame;
+import client.ServerFacade;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import ui.PrintBoard;
+import ui.ReplGame;
+import websocket.messages.LoadGame;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -14,9 +19,10 @@ public class WebSocketFacade extends Endpoint {
     Session session;
 
 
-    public WebSocketFacade(String url) throws ResponseException {
+    public WebSocketFacade(String url, ChessGame.TeamColor teamColor) throws ResponseException {
         try {
             url = url.replace("http", "ws");
+            url = url + "/connect";
             URI socketURI = new URI(url + "/ws");
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -26,8 +32,15 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    //notificationHandler.notify(notification);
+                    if (message.contains("\"serverMessageType\":\"LOAD_GAME\"")){
+                        LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
+                        System.out.print("\r\nA move has been made\n");
+                        new PrintBoard(loadGame.getGame()).printBoard(teamColor, null);
+                    }
+                    else{
+                        System.out.print( '\r');
+                        System.out.printf("\n%s\n[IN-GAME] >>> ", message);
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
