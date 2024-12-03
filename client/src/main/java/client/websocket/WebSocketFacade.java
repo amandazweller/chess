@@ -39,6 +39,10 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
+    public void sendMessage(String message) {
+        this.session.getAsyncRemote().sendText(message);
+    }
+
 
 
 }
