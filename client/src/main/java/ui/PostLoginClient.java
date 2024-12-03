@@ -95,6 +95,8 @@ public class PostLoginClient {
             GameData gameData = games.get(parsedInt - 1);
             boolean result = serverFacade.observeGame(gameData);
             if (result){
+                serverFacade.connect();
+                serverFacade.joinObserver(gameData.gameID());
                 return String.format("Successfully joined game with id: %s. You are now observing. \n", parsedInt);
             }
             else {
