@@ -176,28 +176,42 @@ public class ServerFacade {
         }
     }
 
-    public void sendCommand(UserGameCommand command) {
+    public void close() {
+        try {
+            webSocketFacade.session.close();
+            webSocketFacade= null;
+        }
+        catch (IOException e) {
+            System.out.println("Failed to close connection with server");
+        }
+    }
+
+    public void sendCommand(UserGameCommand command) throws ResponseException {
         String message = new Gson().toJson(command);
         webSocketFacade.sendMessage(message);
     }
 
-    public void joinObserver(int gameID) {
+    public void sendWSMessage(String message) throws ResponseException {
+        webSocketFacade.sendMessage(message);
+    }
+
+    public void joinObserver(int gameID) throws ResponseException {
         sendCommand(new JoinObserver(authToken, gameID));
     }
 
-    public void joinPlayer(int gameID, ChessGame.TeamColor color) {
+    public void joinPlayer(int gameID, ChessGame.TeamColor color) throws ResponseException {
         sendCommand(new JoinPlayer(authToken, gameID, color));
     }
 
-    public void makeMove(int gameID, ChessMove move) {
+    public void makeMove(int gameID, ChessMove move) throws ResponseException {
         sendCommand(new MakeMove(authToken, gameID, move));
     }
 
-    public void leave(int gameID) {
+    public void leave(int gameID) throws ResponseException {
         sendCommand(new Leave(authToken, gameID));
     }
 
-    public void resign(int gameID) {
+    public void resign(int gameID) throws ResponseException {
         sendCommand(new Resign(authToken, gameID));
     }
 }

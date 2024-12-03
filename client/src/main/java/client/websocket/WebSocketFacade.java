@@ -16,17 +16,19 @@ import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint {
 
-    Session session;
+    public Session session;
 
 
     public WebSocketFacade(String url, ChessGame.TeamColor teamColor) throws ResponseException {
         try {
             url = url.replace("http", "ws");
             url = url + "/connect";
-            URI socketURI = new URI(url + "/ws");
+            URI socketURI = new URI(url);
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
+
+            System.out.println(this.session.toString());
 
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
@@ -48,11 +50,27 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    @Override
-    public void onOpen(Session session, EndpointConfig endpointConfig) {
+    @OnOpen
+    public void onOpen(Session session, EndpointConfig config) {
+        this.session = session;
+        System.out.println("WebSocket connection opened: " + session.getId());
     }
 
-    public void sendMessage(String message) {
+    @OnClose
+    public void onClose(Session session, CloseReason reason) {
+        System.out.println("WebSocket connection closed: " + reason.getReasonPhrase());
+        this.session = null;
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        System.err.println("WebSocket error: " + throwable.getMessage());
+    }
+
+    public void sendMessage(String message) throws ResponseException {
+        if (this.session == null) {
+            throw new ResponseException(401, "WebSocket session is not initialized.");
+        }
         this.session.getAsyncRemote().sendText(message);
     }
 
