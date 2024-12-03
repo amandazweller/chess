@@ -3,7 +3,6 @@ package ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import chess.ChessGame;
 import model.GameData;
 import exception.ResponseException;
 import client.ServerFacade;
@@ -91,9 +90,9 @@ public class PostLoginClient {
                 throw new ResponseException(400, "Please enter valid ID");
             }
             GameData gameData = games.get(parsedInt - 1);
-            boolean result = serverFacade.observeGame(parsedInt);
+            boolean result = serverFacade.observeGame(gameData);
             if (result){
-                return String.format("Successfully observing game with id: %s.", parsedInt);
+                return String.format("Successfully joined game with id: %s. You are now observing. \n", parsedInt);
             }
             else {
                 return "Game does not exist. Please try again.";

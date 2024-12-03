@@ -155,9 +155,11 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    public boolean observeGame(int gameID) {
-        currentGameID = gameID;
+    public boolean observeGame(GameData gameData) throws ResponseException {
+        currentGameID = gameData.gameID();
+        game = gameData.game();
         teamColor = null;
+        printBoard(null);
         return true;
     }
 

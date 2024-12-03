@@ -24,6 +24,16 @@ public class GameClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            if (serverFacade.teamColor == null){
+                return switch(cmd){
+                    case "redraw" -> redrawBoard();
+                    case "move" -> "only for those playing. Please try a different command.";
+                    case "resign" -> "not available for observers. Please try a different command.";
+                    case "highlight" -> highlightMoves(params);
+                    case "leave" -> "leave";
+                    default -> help();
+                };
+            }
             return switch (cmd) {
                 case "redraw" -> redrawBoard();
                 case "move" -> makeMove(params);
@@ -49,8 +59,15 @@ public class GameClient {
         throw new ResponseException(400, "Expected: <POSITION>");
     }
 
-    private static final Map<Character, Integer> toColumn = Map.of(
-            'a', 1, 'b', 2, 'c', 3, 'd', 4, 'e', 5, 'f', 6, 'g', 7, 'h', 8
+    private final Map<Character, Integer> toColumn = Map.of(
+            'a', 1,
+            'b', 2,
+            'c', 3,
+            'd', 4,
+            'e', 5,
+            'f', 6,
+            'g', 7,
+            'h', 8
     );
 
     private String makeMove(String... params) throws InvalidMoveException, ResponseException {
@@ -61,11 +78,10 @@ public class GameClient {
             if (serverFacade.game.getTeamTurn() != serverFacade.teamColor){
                 return "Other team's turn. Please wait to make move.";
             }
-
-            int startCol = toColumn.get(params[0].charAt(1));
+            int startCol = toColumn.get((params[0].charAt(0)));
             int startRow = Character.getNumericValue(params[0].charAt(1));
             ChessPosition start = new ChessPosition(startRow, startCol);
-            int endCol = toColumn.get(params[1].charAt(1));
+            int endCol = toColumn.get(params[1].charAt(0));
             int endRow = Character.getNumericValue(params[1].charAt(1));
             ChessPosition end = new ChessPosition(endRow, endCol);
 
@@ -103,11 +119,11 @@ public class GameClient {
 
     public String help() {
         return """
-                    move <FROM> <TO> <PROMOTION-PIECE> - make a move (promotion piece only used when the move will result in promotion of pawn)
+                    move <FROM> <TO> <PROMOTION-PIECE> - make a move (not for observing players)
                     highlight <POSITION> - highlight all legal moves for this piece
                     redraw - redraw board
                     leave - leave game
-                    resign - forfeit game
+                    resign - forfeit game (not for observing players)
                     help - with possible commands
                     """;
     }

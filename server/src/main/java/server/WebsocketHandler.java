@@ -107,10 +107,6 @@ public class WebsocketHandler {
             sendError(session, new Error("Error: the game is over, not able to make a move"));
             return;
         }
-        if (!game.game().getTeamTurn().equals(playerColor)) {
-            sendError(session, new Error("Error: It is not your turn"));
-            return;
-        }
         game.game().makeMove(command.getMove());
         ChessGame.TeamColor opponentColor = playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
         broadcastGameUpdate(session, auth.username(), game, playerColor);

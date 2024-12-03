@@ -111,7 +111,6 @@ public class ChessGame {
 
                 if (!willCheck(move)){
                     valid.add(move);
-                    System.out.println(move.getEndPosition().getRow() + " " + move.getEndPosition().getColumn());
                 }
         }
         return valid;
