@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import exceptions.ResponseException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
@@ -12,6 +13,7 @@ import com.google.gson.JsonObject;
 import model.GameData;
 import model.ListGameResponse;
 import model.UserData;
+import org.eclipse.jetty.websocket.api.Session;
 import service.*;
 import spark.*;
 
@@ -24,6 +26,9 @@ public class Server {
     private final CreateGameService createGameService;
     private final JoinGameService joinGameService;
     private final ClearService clearService;
+
+    static Map<Session, Integer> allSessions = new HashMap<>();
+
 
     public Server(){
         try {
