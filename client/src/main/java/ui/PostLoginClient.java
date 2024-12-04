@@ -67,10 +67,9 @@ public class PostLoginClient {
             }
             GameData gameData = games.get(id - 1);
             String playerColor = params[1].toUpperCase();
+            serverFacade.connect();
             boolean result = serverFacade.joinGame(gameData, playerColor);
             if (result){
-                serverFacade.connect();
-                serverFacade.connect(gameData.gameID(), ChessGame.TeamColor.valueOf(playerColor));
                 return String.format("Game %s joined successfully. \n", id);
             }
             else {
