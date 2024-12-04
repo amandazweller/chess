@@ -11,4 +11,5 @@ public interface GameDAO {
     public void clearGames() throws DataAccessException;
     public void setWhiteUsername(Integer gameID, String whiteUsername) throws DataAccessException;
     public void setBlackUsername(Integer gameID, String blackUsername) throws DataAccessException;
+
 }

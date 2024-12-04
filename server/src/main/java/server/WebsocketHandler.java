@@ -118,8 +118,6 @@ public class WebsocketHandler {
                 return;
             }
             game.game().makeMove(command.getMove());
-            System.out.println(game.game().getBoard().getPiece(new ChessPosition(4, 7)).getPieceType());
-            ChessGame.TeamColor opponentColor = playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
             broadcastGameUpdate(session, auth.username(), game, playerColor);
         } catch (ResponseException e) {
             sendError(session, new Error("Error: Game is over"));
@@ -128,15 +126,12 @@ public class WebsocketHandler {
 
     private void broadcastGameUpdate(Session session, String username, GameData game, ChessGame.TeamColor playerColor) throws DataAccessException, IOException {
         Notification notification;
-        System.out.println("here");
-
         ChessGame.TeamColor opponentColor;
         if (playerColor == ChessGame.TeamColor.WHITE) {
             opponentColor = ChessGame.TeamColor.BLACK;
         } else {
             opponentColor = ChessGame.TeamColor.WHITE;
         }
-        System.out.println(game.game().isInCheckmate(ChessGame.TeamColor.WHITE));
         if (game.game().isInCheckmate(opponentColor)) {
             System.out.println("in checkmate");
             notification = new Notification("Checkmate! %s wins!".formatted(username));
@@ -152,8 +147,8 @@ public class WebsocketHandler {
         }
         notifyAll(session, notification);
         var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
-        mySqlDAO.executeUpdate(statement, game.game(), game.gameID());
         notifyEveryone(session, new LoadGame(game.game()), true);
+        mySqlDAO.executeUpdate(statement, game.game(), game.gameID());
     }
 
     private void connect(Session session, Connect command) throws DataAccessException, IOException {

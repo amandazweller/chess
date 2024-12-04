@@ -21,8 +21,7 @@ public class WebSocketFacade extends Endpoint {
 
     public WebSocketFacade(String url, ChessGame.TeamColor teamColor) throws ResponseException {
         try {
-            url = url.replace("http", "ws");
-            url = url + "/connect";
+            url = "ws://localhost:8181/connect";
             URI socketURI = new URI(url);
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();

@@ -8,6 +8,9 @@ import exceptions.ResponseException;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 
 public class MySqlGameDAO implements GameDAO{
     MySqlDAO mySqlDAO = new MySqlDAO();
@@ -49,7 +52,6 @@ public class MySqlGameDAO implements GameDAO{
         }
         return null;
     }
-
 
     public ArrayList<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> games = new ArrayList<>();
@@ -100,6 +102,35 @@ public class MySqlGameDAO implements GameDAO{
     public void setBlackUsername(Integer gameID, String blackUsername) throws DataAccessException {
         var statement = "UPDATE gameData SET blackUsername = ? WHERE gameID = ?";
         mySqlDAO.executeUpdate(statement, blackUsername, gameID);
+    }
+
+    public void executeUpdate(String statement, Object... params) throws ResponseException, DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    } else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    } else if (param == null) {
+                        ps.setNull(i + 1, NULL);
+                    } else if (param instanceof ChessGame p){
+                        ps.setString(i + 1, new Gson().toJson(p));
+                    }
+
+                }
+                ps.executeUpdate();
+
+                var rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    rs.getInt(1);
+                }
+
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
     }
 
 }
