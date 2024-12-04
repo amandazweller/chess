@@ -150,7 +150,8 @@ public class WebsocketHandler {
         }
     }
 
-    private void broadcastGameUpdate(Session session, String username, GameData game, ChessGame.TeamColor playerColor) throws DataAccessException, IOException {
+    private void broadcastGameUpdate(Session session, String username, GameData game, ChessGame.TeamColor playerColor)
+            throws DataAccessException, IOException {
         Notification notification;
         ChessGame.TeamColor opponentColor;
         if (playerColor == ChessGame.TeamColor.WHITE) {
@@ -200,7 +201,8 @@ public class WebsocketHandler {
                 return;
             }
 
-            ChessGame.TeamColor playerColor = command.getColor().toString().equalsIgnoreCase("white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            ChessGame.TeamColor playerColor = command.getColor().toString().equalsIgnoreCase("white")
+                    ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
 
             boolean isCorrectColor;
             if (playerColor == ChessGame.TeamColor.WHITE) {
@@ -249,7 +251,9 @@ public class WebsocketHandler {
         else if (username.equals(game.blackUsername())) {
             return ChessGame.TeamColor.BLACK;
         }
-        else return null;
+        else{
+            return null;
+        }
     }
 
     public void sendMessage(Session session, ServerMessage message) throws IOException {

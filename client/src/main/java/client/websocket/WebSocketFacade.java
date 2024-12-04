@@ -52,17 +52,6 @@ public class WebSocketFacade extends Endpoint {
         System.out.println("WebSocket connection opened: " + session.getId());
     }
 
-    @OnClose
-    public void onClose(Session session, CloseReason reason) {
-        System.out.println("WebSocket connection closed: " + reason.getReasonPhrase());
-        this.session = null;
-    }
-
-    @OnError
-    public void onError(Session session, Throwable throwable) {
-        System.err.println("WebSocket error: " + throwable.getMessage());
-    }
-
     public void sendMessage(String message) throws ResponseException {
         if (this.session == null) {
             throw new ResponseException(401, "WebSocket session is not initialized.");
