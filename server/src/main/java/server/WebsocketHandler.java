@@ -194,7 +194,7 @@ public class WebsocketHandler {
             Server.allSessions.put(session, game.gameID());
 
             if (command.getColor() == null){
-                Notification notification = new Notification("%s joined the game as observer".formatted(auth.username()));
+                Notification notification = new Notification("%s joined the game".formatted(auth.username()));
                 notifyAll(session, notification, game.gameID());
                 LoadGame load = new LoadGame(game.game());
                 sendMessage(session, load);

@@ -103,8 +103,12 @@ public class GameClient {
             }
             ChessMove move = new ChessMove(start, end, promotionPiece);
             serverFacade.makeMove(serverFacade.currentGameID, move);
+
         }
-        throw new ResponseException(400, "Expected: <FROM> <TO> <PROMOTION-PIECE> (promotion piece only applicable with promotion of pawn)");
+        else{
+            throw new ResponseException(400, "Expected: <FROM> <TO> <PROMOTION-PIECE> (promotion piece only applicable with promotion of pawn)");
+        }
+        return " ";
     }
 
     public ChessPiece.PieceType getPieceType(String name) {
