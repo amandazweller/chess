@@ -16,10 +16,6 @@ public class MakeMove extends UserGameCommand {
     }
 
     public ChessMove getMove() {
-//        System.out.println(move.getStartPosition().getRow() + move.getStartPosition().getColumn());
-//
-//        System.out.println(move.getEndPosition().getRow() + move.getEndPosition().getColumn());
-
         return move;
     }
 }
