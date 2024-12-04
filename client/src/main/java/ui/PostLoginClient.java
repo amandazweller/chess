@@ -70,7 +70,7 @@ public class PostLoginClient {
             boolean result = serverFacade.joinGame(gameData, playerColor);
             if (result){
                 serverFacade.connect();
-                serverFacade.joinPlayer(gameData.gameID(), ChessGame.TeamColor.valueOf(playerColor));
+                serverFacade.connect(gameData.gameID(), ChessGame.TeamColor.valueOf(playerColor));
                 return String.format("Game %s joined successfully. \n", id);
             }
             else {
@@ -96,7 +96,7 @@ public class PostLoginClient {
             boolean result = serverFacade.observeGame(gameData);
             if (result){
                 serverFacade.connect();
-                serverFacade.joinObserver(gameData.gameID());
+                serverFacade.connect(gameData.gameID());
                 return String.format("Successfully joined game with id: %s. You are now observing. \n", parsedInt);
             }
             else {

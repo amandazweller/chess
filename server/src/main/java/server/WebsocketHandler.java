@@ -1,19 +1,18 @@
 package server;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import exceptions.ResponseException;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 import websocket.commands.*;
 import chess.ChessGame;
 import model.GameData;
 import websocket.messages.*;
 import websocket.messages.Error;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 
 @WebSocket
@@ -27,17 +26,18 @@ public class WebsocketHandler {
     public WebsocketHandler() throws DataAccessException {
     }
 
-
+    @OnWebSocketConnect
     public void handleConnect(Session session) {
-            Server.allSessions.put(session, 0);
-        }
+        Server.allSessions.put(session, 0);
+    }
 
-        public void handleClose(Session session, int code, String message) {
-            Server.allSessions.remove(session);
-        }
+     @OnWebSocketClose
+    public void handleClose(Session session, int code, String message) {
+        Server.allSessions.remove(session);
+    }
 
     @OnWebSocketMessage
-    public void handleMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException, InvalidMoveException {
         System.out.printf("Received: %s%n", message);
 
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
@@ -102,24 +102,33 @@ public class WebsocketHandler {
     }
 
     private void makeMove(Session session, MakeMove command) throws DataAccessException, IOException, InvalidMoveException {
-        AuthData auth = authDAO.getAuth(command.getAuthToken());
-        GameData game = gameDAO.getGame(command.getGameID());
-        ChessGame.TeamColor playerColor = getTeamColor(auth.username(), game);
-        if (playerColor == null) {
-            sendError(session, new Error("Error: You are only observing this game"));
-            return;
+        GameData game = null;
+        try {
+            AuthData auth = authDAO.getAuth(command.getAuthToken());
+
+            game = gameDAO.getGame(command.getGameID());
+            ChessGame.TeamColor playerColor = getTeamColor(auth.username(), game);
+            if (playerColor == null) {
+                sendError(session, new Error("Error: You are only observing this game"));
+                return;
+            }
+
+            if (game.game().isGameOver()) {
+                sendError(session, new Error("Error: the game is over, not able to make a move"));
+                return;
+            }
+            game.game().makeMove(command.getMove());
+            System.out.println(game.game().getBoard().getPiece(new ChessPosition(4, 7)).getPieceType());
+            ChessGame.TeamColor opponentColor = playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+            broadcastGameUpdate(session, auth.username(), game, playerColor);
+        } catch (ResponseException e) {
+            sendError(session, new Error("Error: Game is over"));
         }
-        if (game.game().isGameOver()) {
-            sendError(session, new Error("Error: the game is over, not able to make a move"));
-            return;
-        }
-        game.game().makeMove(command.getMove());
-        ChessGame.TeamColor opponentColor = playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
-        broadcastGameUpdate(session, auth.username(), game, playerColor);
     }
 
     private void broadcastGameUpdate(Session session, String username, GameData game, ChessGame.TeamColor playerColor) throws DataAccessException, IOException {
         Notification notification;
+        System.out.println("here");
 
         ChessGame.TeamColor opponentColor;
         if (playerColor == ChessGame.TeamColor.WHITE) {
@@ -127,11 +136,13 @@ public class WebsocketHandler {
         } else {
             opponentColor = ChessGame.TeamColor.WHITE;
         }
-
+        System.out.println(game.game().isInCheckmate(ChessGame.TeamColor.WHITE));
         if (game.game().isInCheckmate(opponentColor)) {
+            System.out.println("in checkmate");
             notification = new Notification("Checkmate! %s wins!".formatted(username));
             game.game().setGameOver(true);
         } else if (game.game().isInStalemate(opponentColor)) {
+            System.out.println("in stalemate");
             notification = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(username));
             game.game().setGameOver(true);
         } else if (game.game().isInCheck(opponentColor)) {
@@ -139,32 +150,28 @@ public class WebsocketHandler {
         } else {
             notification = new Notification("%s made a move.".formatted(username));
         }
-
         notifyAll(session, notification);
-        mySqlDAO.executeUpdate(username, game);
-        notifyAll(session, new LoadGame(game.game()));
+        var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
+        mySqlDAO.executeUpdate(statement, game.game(), game.gameID());
+        notifyEveryone(session, new LoadGame(game.game()), true);
     }
 
     private void connect(Session session, Connect command) throws DataAccessException, IOException {
         try {
             AuthData auth = authDAO.getAuth(command.getAuthToken());
             GameData game = gameDAO.getGame(command.getGameID());
-
+            if (auth == null){
+                sendError(session, new Error("Error: Not authorized"));
+            }
+            if (game == null){
+                sendError(session, new Error("Error: Not a valid game"));
+            }
             if (command.getColor() == null){
-                try {
-                    Notification notification = new Notification("%s joined the game as observer".formatted(auth.username()));
-                    notifyAll(session, notification);
-                } catch (ResponseException e) {
-                    sendError(session, new Error("Error: Not authorized"));
-                }
-                try{
-                    LoadGame load = new LoadGame(game.game());
-                    sendMessage(session, load);
-                    return;
-                } catch (ResponseException e) {
-                    sendError(session, new Error("Error: Not a valid game"));
-                }
-
+                Notification notification = new Notification("%s joined the game as observer".formatted(auth.username()));
+                notifyAll(session, notification);
+                LoadGame load = new LoadGame(game.game());
+                sendMessage(session, load);
+                return;
             }
 
             ChessGame.TeamColor playerColor = command.getColor().toString().equalsIgnoreCase("white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
@@ -197,13 +204,13 @@ public class WebsocketHandler {
         notifyEveryone(currentSession, message, false);
     }
 
-    public void notifyEveryone(Session currentSession, ServerMessage message, boolean local) throws IOException {
-        System.out.printf("Broadcasting (toSelf: %s): %s%n", local, new Gson().toJson(message));
+    public void notifyEveryone(Session currentSession, ServerMessage message, boolean toSelf) throws IOException {
+        System.out.printf("Broadcasting (toSelf: %s): %s%n", toSelf, new Gson().toJson(message));
         for (Session session : Server.allSessions.keySet()) {
-            boolean inGame = Server.allSessions.get(session) != 0;
+            boolean inGame = Server.allSessions.get(session) != -1;
             boolean inSameGame = Server.allSessions.get(session).equals(Server.allSessions.get(currentSession));
-            boolean isLocal = session == currentSession;
-            if ((local || !isLocal) && inGame && inSameGame) {
+            boolean isSelf = session == currentSession;
+            if ((toSelf || !isSelf) && inGame && inSameGame) {
                 sendMessage(session, message);
             }
         }
