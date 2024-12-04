@@ -136,11 +136,13 @@ public class WebsocketHandler {
                 sendError(session, new Error("Error: the game is over, not able to make a move"));
                 return;
             }
+
             boolean invalidMove = game.game().checkValidMove(command.getMove());
             if (invalidMove){
                 sendError(session, new Error("Invalid Move."));
                 return;
             }
+
             game.game().makeMove(command.getMove());
             broadcastGameUpdate(session, auth.username(), game, playerColor);
         } catch (ResponseException e) {
