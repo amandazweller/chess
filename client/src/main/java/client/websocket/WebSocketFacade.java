@@ -1,15 +1,22 @@
 package client.websocket;
 
 import chess.ChessGame;
+import client.ServerFacade;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import ui.GameClient;
 import ui.PrintBoard;
+import ui.ReplGame;
 import websocket.messages.LoadGame;
+import websocket.messages.Notification;
+import websocket.messages.Error;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static ui.EscapeSequences.ERASE_LINE;
 
 public class WebSocketFacade extends Endpoint {
 
@@ -31,11 +38,16 @@ public class WebSocketFacade extends Endpoint {
                 public void onMessage(String message) {
                     if (message.contains("\"serverMessageType\":\"LOAD_GAME\"")){
                         LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
-                        //new PrintBoard(loadGame.getGame()).printBoard(teamColor, null);
+                        PrintBoard printBoard = new PrintBoard(loadGame.getGame());
+                        printBoard.printBoard(teamColor, null);
                     }
-                    else{
-                        System.out.print( '\r');
-                        System.out.printf("\n%s\n[IN-GAME] >>> ", message);
+                    else if (message.contains("\"serverMessageType\":\"ERROR\"")){
+                        Error error = new Gson().fromJson(message, Error.class);
+                        System.out.printf("\n%s\n", error.getMessage());
+                    }
+                    else {
+                        Notification notification = new Gson().fromJson(message, Notification.class);
+                        System.out.printf("\n%s\n ", notification.getMessage());
                     }
                 }
             });

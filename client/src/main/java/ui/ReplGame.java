@@ -18,7 +18,7 @@ public class ReplGame {
     }
 
     public void run(ServerFacade server) throws ResponseException {
-        client.serverFacade.printBoard(null);
+        //client.serverFacade.printBoard(null);
 
         Scanner scanner = new Scanner(System.in);
         var result = "";

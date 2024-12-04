@@ -143,7 +143,6 @@ public class WebsocketHandler {
                 sendError(session, new Error("Invalid Move."));
                 return;
             }
-
             game.game().makeMove(command.getMove());
             broadcastGameUpdate(session, auth.username(), game, playerColor);
         } catch (ResponseException e) {
@@ -219,7 +218,6 @@ public class WebsocketHandler {
             }
             Notification notification = new Notification("%s joined the game as %s player".formatted(auth.username(), command.getColor().toString()));
             notifyAll(session, notification, game.gameID());
-
             LoadGame load = new LoadGame(game.game());
             sendMessage(session, load);
         }catch (DataAccessException e) {
