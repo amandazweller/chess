@@ -96,6 +96,7 @@ public class WebsocketHandler {
             GameData game = gameDAO.getGame(command.getGameID());
             Notification notification = new Notification("%s has left the game".formatted(auth.username()));
             notifyAll(session, notification, game.gameID());
+
             if (game.whiteUsername().equals(auth.username())){
                 var statement = "UPDATE gameData SET whiteUsername = ? WHERE gameID=?";
                 mySqlDAO.executeUpdate(statement, null, game.gameID());

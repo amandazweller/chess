@@ -27,11 +27,9 @@ public class GameClient {
             if (serverFacade.teamColor == null){
                 return switch(cmd){
                     case "redraw" -> redrawBoard();
-                    case "move" -> "only for those playing. Please try a different command.";
-                    case "resign" -> "not available for observers. Please try a different command.";
                     case "highlight" -> highlightMoves(params);
-                    case "leave" -> "leave";
-                    default -> help();
+                    case "leave" -> leave();
+                    default -> help1();
                 };
             }
             return switch (cmd) {
@@ -39,12 +37,26 @@ public class GameClient {
                 case "move" -> makeMove(params);
                 case "highlight" -> highlightMoves(params);
                 case "resign" -> resign();
-                case "leave" -> "leave";
+                case "leave" -> leave();
                 default -> help();
             };
         } catch (ResponseException | InvalidMoveException ex) {
             return ex.getMessage();
         }
+    }
+
+    private String help1() {
+        return """
+                    highlight <POSITION> - highlight all legal moves for this piece
+                    redraw - redraw board
+                    leave - leave game
+                    help - with possible commands
+                    """;
+    }
+
+    private String leave() throws ResponseException {
+        serverFacade.leave(serverFacade.currentGameID);
+        return "You left the game";
     }
 
     private String highlightMoves(String... params) throws ResponseException {
@@ -90,7 +102,7 @@ public class GameClient {
                 promotionPiece = getPieceType(params[2]);
             }
             ChessMove move = new ChessMove(start, end, promotionPiece);
-            serverFacade.game.makeMove(move);
+            serverFacade.makeMove(serverFacade.currentGameID, move);
             redrawBoard();
             return "Move made successfully";
         }
@@ -113,7 +125,8 @@ public class GameClient {
         return " ";
     }
 
-    private String resign() {
+    private String resign() throws ResponseException {
+        serverFacade.resign(serverFacade.currentGameID);
         return String.format("%s resigned successfully. Game over.", serverFacade.currentUsername);
     }
 

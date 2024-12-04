@@ -19,7 +19,6 @@ public class ReplGame {
 
     public void run(ServerFacade server) throws ResponseException {
         client.serverFacade.printBoard(null);
-        System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -30,6 +29,9 @@ public class ReplGame {
             try {
                 result = client.eval(line);
                 System.out.print(result);
+                if (result.contains("left")){
+                    break;
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
