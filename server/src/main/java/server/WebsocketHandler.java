@@ -1,4 +1,5 @@
 package server;
+import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import websocket.messages.*;
 import websocket.messages.Error;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @WebSocket
 public class WebsocketHandler {
@@ -79,7 +81,8 @@ public class WebsocketHandler {
             }
 
             game.game().setGameOver(true);
-            mySqlDAO.executeUpdate(auth.authToken(), game);
+            var statement = "UPDATE gameData SET game=? WHERE gameID=?";
+            mySqlDAO.executeUpdate(statement, game.game(), game.gameID());
             Notification notification = new Notification("%s has forfeited, %s wins!".formatted(auth.username(), opponentUsername));
             notifyEveryone(session, notification, true);
         } catch (DataAccessException e) {
@@ -92,9 +95,17 @@ public class WebsocketHandler {
     private void leave(Session session, Leave command) throws IOException {
         try {
             AuthData auth = authDAO.getAuth(command.getAuthToken());
+            GameData game = gameDAO.getGame(command.getGameID());
             Notification notification = new Notification("%s has left the game".formatted(auth.username()));
             notifyAll(session, notification);
-
+            if (game.whiteUsername().equals(auth.username())){
+                var statement = "UPDATE gameData SET whiteUsername = ? WHERE gameID=?";
+                mySqlDAO.executeUpdate(statement, null, game.gameID());
+            }
+            if (game.blackUsername().equals(auth.username())){
+                var statement = "UPDATE gameData SET blackUsername = ? WHERE gameID=?";
+                mySqlDAO.executeUpdate(statement, null, game.gameID());
+            }
             session.close();
         } catch (DataAccessException e) {
             sendError(session, new Error("Error: Not authorized"));
@@ -105,9 +116,20 @@ public class WebsocketHandler {
         GameData game = null;
         try {
             AuthData auth = authDAO.getAuth(command.getAuthToken());
-
+            if (auth == null){
+                sendError(session, new Error("Invalid authToken."));
+                return;
+            }
             game = gameDAO.getGame(command.getGameID());
             ChessGame.TeamColor playerColor = getTeamColor(auth.username(), game);
+            if (game.game().getTeamTurn() != playerColor){
+                sendError(session, new Error("Please wait until your turn"));
+                return;
+            }
+            if (game.game().getBoard().getPiece(command.getMove().getStartPosition()).getTeamColor() != playerColor){
+                sendError(session, new Error("Can't move other team's pieces. Try again."));
+                return;
+            }
             if (playerColor == null) {
                 sendError(session, new Error("Error: You are only observing this game"));
                 return;
@@ -117,7 +139,12 @@ public class WebsocketHandler {
                 sendError(session, new Error("Error: the game is over, not able to make a move"));
                 return;
             }
-            game.game().makeMove(command.getMove());
+            Collection<ChessMove> validMoves = game.game().validMoves(command.getMove().getStartPosition());
+            boolean invalidMove = game.game().makeMove(command.getMove());
+            if (!invalidMove){
+                sendError(session, new Error("Invalid Move."));
+                return;
+            }
             broadcastGameUpdate(session, auth.username(), game, playerColor);
         } catch (ResponseException e) {
             sendError(session, new Error("Error: Game is over"));
@@ -146,7 +173,7 @@ public class WebsocketHandler {
             notification = new Notification("%s made a move.".formatted(username));
         }
         notifyAll(session, notification);
-        var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
+        var statement = "UPDATE gameData SET game=? WHERE gameID=?";
         notifyEveryone(session, new LoadGame(game.game()), true);
         mySqlDAO.executeUpdate(statement, game.game(), game.gameID());
     }
@@ -205,6 +232,7 @@ public class WebsocketHandler {
             boolean inGame = Server.allSessions.get(session) != -1;
             boolean inSameGame = Server.allSessions.get(session).equals(Server.allSessions.get(currentSession));
             boolean isSelf = session == currentSession;
+            System.out.println(inGame + " " + inSameGame);
             if ((toSelf || !isSelf) && inGame && inSameGame) {
                 sendMessage(session, message);
             }

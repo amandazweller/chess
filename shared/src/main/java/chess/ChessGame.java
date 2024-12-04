@@ -170,7 +170,7 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
+    public boolean makeMove(ChessMove move) throws InvalidMoveException {
         boolean invalidMove = true;
         if (board.getPiece(move.getStartPosition()) == null){
             throw new InvalidMoveException("No piece at start");
@@ -189,7 +189,7 @@ public class ChessGame {
             }
         }
         if (invalidMove){
-            throw new InvalidMoveException("Not valid move");
+            return false;
         }
         else {
             ChessPiece piece = board.getPiece(move.getStartPosition());
@@ -209,6 +209,7 @@ public class ChessGame {
                 setTeamTurn(TeamColor.WHITE);
             }
         }
+        return true;
     }
 
     /**

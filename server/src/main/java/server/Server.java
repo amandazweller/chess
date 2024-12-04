@@ -6,6 +6,7 @@ import exceptions.ResponseException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.gson.JsonObject;
 
@@ -27,7 +28,7 @@ public class Server {
     private final JoinGameService joinGameService;
     private final ClearService clearService;
 
-    static Map<Session, Integer> allSessions = new HashMap<>();
+    static ConcurrentHashMap<Session, Integer> allSessions = new ConcurrentHashMap<>();
 
 
     public Server(){
