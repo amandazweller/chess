@@ -1,6 +1,5 @@
 package server;
 import chess.ChessMove;
-import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
@@ -21,7 +20,6 @@ import java.util.Collection;
 public class WebsocketHandler {
 
     AuthDAO authDAO = new MySqlAuthDAO();
-    UserDAO userDAO = new MySqlUserDAO();
     GameDAO gameDAO = new MySqlGameDAO();
     MySqlDAO mySqlDAO = new MySqlDAO();
 
@@ -113,14 +111,13 @@ public class WebsocketHandler {
     }
 
     private void makeMove(Session session, MakeMove command) throws DataAccessException, IOException, InvalidMoveException {
-        GameData game = null;
         try {
             AuthData auth = authDAO.getAuth(command.getAuthToken());
             if (auth == null){
                 sendError(session, new Error("Invalid authToken."));
                 return;
             }
-            game = gameDAO.getGame(command.getGameID());
+            GameData game = gameDAO.getGame(command.getGameID());
             ChessGame.TeamColor playerColor = getTeamColor(auth.username(), game);
             if (game.game().getTeamTurn() != playerColor){
                 sendError(session, new Error("Please wait until your turn"));
@@ -139,19 +136,18 @@ public class WebsocketHandler {
                 sendError(session, new Error("Error: the game is over, not able to make a move"));
                 return;
             }
-            Collection<ChessMove> validMoves = game.game().validMoves(command.getMove().getStartPosition());
             boolean invalidMove = game.game().makeMove(command.getMove());
             if (!invalidMove){
                 sendError(session, new Error("Invalid Move."));
                 return;
             }
-            broadcastGameUpdate(session, auth.username(), game, playerColor, auth);
+            broadcastGameUpdate(session, auth.username(), game, playerColor);
         } catch (ResponseException e) {
             sendError(session, new Error("Error: Game is over"));
         }
     }
 
-    private void broadcastGameUpdate(Session session, String username, GameData game, ChessGame.TeamColor playerColor, AuthData auth) throws DataAccessException, IOException {
+    private void broadcastGameUpdate(Session session, String username, GameData game, ChessGame.TeamColor playerColor) throws DataAccessException, IOException {
         Notification notification;
         ChessGame.TeamColor opponentColor;
         if (playerColor == ChessGame.TeamColor.WHITE) {
@@ -178,7 +174,7 @@ public class WebsocketHandler {
         mySqlDAO.executeUpdate(statement, game.game(), game.gameID());
     }
 
-    private void connect(Session session, Connect command) throws DataAccessException, IOException {
+    private void connect(Session session, Connect command) throws IOException {
         try {
             AuthData auth = authDAO.getAuth(command.getAuthToken());
             GameData game = gameDAO.getGame(command.getGameID());
@@ -253,13 +249,8 @@ public class WebsocketHandler {
         else return null;
     }
 
-    public void sendMessage(Session session, ServerMessage message) throws IOException, IOException {
+    public void sendMessage(Session session, ServerMessage message) throws IOException {
         session.getRemote().sendString(new Gson().toJson(message));
-    }
-
-    private boolean checkColor(String username, GameData game, ChessGame.TeamColor color) {
-        return (color == ChessGame.TeamColor.WHITE && username.equals(game.whiteUsername())) ||
-                (color == ChessGame.TeamColor.BLACK && username.equals(game.blackUsername()));
     }
 
 }

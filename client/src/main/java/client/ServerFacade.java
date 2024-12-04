@@ -3,7 +3,6 @@ package client;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import client.websocket.HttpFacade;
 import client.websocket.WebSocketFacade;
 import com.google.gson.Gson;
 import exception.ResponseException;
@@ -155,7 +154,7 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    public boolean observeGame(GameData gameData) throws ResponseException {
+    public boolean observeGame(GameData gameData) {
         currentGameID = gameData.gameID();
         game = gameData.game();
         teamColor = null;
@@ -163,7 +162,7 @@ public class ServerFacade {
         return true;
     }
 
-    public void printBoard(ChessPosition highlighted) throws ResponseException {
+    public void printBoard(ChessPosition highlighted) {
         new PrintBoard(game).printBoard(teamColor, highlighted);
     }
 
@@ -186,28 +185,4 @@ public class ServerFacade {
         }
     }
 
-    public void sendCommand(UserGameCommand command) throws ResponseException {
-        String message = new Gson().toJson(command);
-        webSocketFacade.sendMessage(message);
-    }
-
-    public void sendWSMessage(String message) throws ResponseException {
-        webSocketFacade.sendMessage(message);
-    }
-
-    public void connect(int gameID, ChessGame.TeamColor color) throws ResponseException {
-        sendCommand(new Connect(authToken, gameID, color));
-    }
-
-    public void makeMove(int gameID, ChessMove move) throws ResponseException {
-        sendCommand(new MakeMove(authToken, gameID, move));
-    }
-
-    public void leave(int gameID) throws ResponseException {
-        sendCommand(new Leave(authToken, gameID));
-    }
-
-    public void resign(int gameID) throws ResponseException {
-        sendCommand(new Resign(authToken, gameID));
-    }
 }
