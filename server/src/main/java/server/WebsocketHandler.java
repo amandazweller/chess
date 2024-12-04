@@ -160,11 +160,9 @@ public class WebsocketHandler {
             opponentColor = ChessGame.TeamColor.WHITE;
         }
         if (game.game().isInCheckmate(opponentColor)) {
-            System.out.println("in checkmate");
             notification = new Notification("Checkmate! %s wins!".formatted(username));
             game.game().setGameOver(true);
         } else if (game.game().isInStalemate(opponentColor)) {
-            System.out.println("in stalemate");
             notification = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(username));
             game.game().setGameOver(true);
         } else if (game.game().isInCheck(opponentColor)) {
